@@ -8,20 +8,11 @@ import java.time.LocalDateTime;
 public class DocumentResponseDTO {
 
     private Long documentId;
-
-    private Long userId;
-
     private String documentType;
-
     private String fileName;
-
-    private String contentType;
-
-    private Long fileSize;
-
+    private String fileUrl;   // <-- add
     private String status;
-
-    private LocalDateTime uploadedAt;
-
+    private Long userId;
     private String remarks;
+    private LocalDateTime uploadedAt;
 }

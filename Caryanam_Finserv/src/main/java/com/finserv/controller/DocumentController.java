@@ -12,6 +12,7 @@ import com.finserv.service.DocumentService;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -216,14 +217,23 @@ public class DocumentController {
 
 
     @GetMapping("/download/{documentId}")
-    public ResponseEntity<byte[]> downloadDocument(@PathVariable Long documentId) {
+    public ResponseEntity<byte[]> downloadDocument(
+            @PathVariable Long documentId) {
 
-        Document doc = documentService.getEntityById(documentId);
+        Document document = documentService.getEntityById(documentId);
 
         return ResponseEntity.ok()
-                .header("Content-Disposition", "attachment; filename=" + doc.getFileName())
-                .header("Content-Type", doc.getContentType())
-                .body(doc.getFileData());
+                .contentType(
+                        MediaType.parseMediaType(
+                                document.getContentType()
+                        )
+                )
+                .header(
+                        HttpHeaders.CONTENT_DISPOSITION,
+                        "inline; filename=\"" +
+                                document.getFileName() + "\""
+                )
+                .body(document.getFileData());
     }
 
 

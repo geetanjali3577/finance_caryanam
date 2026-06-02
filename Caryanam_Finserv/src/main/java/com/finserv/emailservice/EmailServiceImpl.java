@@ -55,58 +55,36 @@ public class EmailServiceImpl implements EmailService {
             );
 
             String body =
+                    "Dear Bank Team,\n\n" +
 
-                    "Customer Details\n\n"
+                            "A new loan application has been submitted. Please find the customer details below:\n\n" +
 
-                            + "Name : "
-                            + user.getFullName()
-                            + "\n"
+                            "==============================\n" +
+                            "CUSTOMER DETAILS\n" +
+                            "==============================\n" +
+                            "Name            : " + user.getFullName() + "\n" +
+                            "Email           : " + user.getEmail() + "\n" +
+                            "Mobile Number   : " + user.getMobileNumber() + "\n\n" +
 
-                            + "Email : "
-                            + user.getEmail()
-                            + "\n"
+                            "==============================\n" +
+                            "ADDRESS DETAILS\n" +
+                            "==============================\n" +
+                            "Address         : " + personalInfo.getAddress() + "\n" +
+                            "City            : " + personalInfo.getCity() + "\n" +
+                            "State           : " + personalInfo.getState() + "\n" +
+                            "Pincode         : " + personalInfo.getPincode() + "\n\n" +
 
-                            + "Mobile : "
-                            + user.getMobileNumber()
-                            + "\n\n"
+                            "==============================\n" +
+                            "LOAN DETAILS\n" +
+                            "==============================\n" +
+                            "Required Amount : ₹" + personalInfo.getLoanAmount() + "\n\n" +
 
-                            + "Address : "
-                            + personalInfo.getAddress()
-                            + "\n"
+                            "The customer's supporting documents are attached with this email.\n\n" +
 
-                            + "City : "
-                            + personalInfo.getCity()
-                            + "\n"
-
-                            + "State : "
-                            + personalInfo.getState()
-                            + "\n"
-
-                            + "Pincode : "
-                            + personalInfo.getPincode()
-                            + "\n"
-
-                            + "Required Loan Amount : "
-                            + personalInfo.getLoanAmount();
+                            "Regards,\n" +
+                            "Finserv Team";
 
             helper.setText(body);
-
-            for (Document doc : documents) {
-
-                if (doc.getFileData() != null) {
-
-                    helper.addAttachment(
-
-                            doc.getFileName(),
-
-                            new ByteArrayResource(
-                                    doc.getFileData()
-                            )
-                    );
-                }
-            }
-
-            mailSender.send(message);
 
         } catch (Exception e) {
 
