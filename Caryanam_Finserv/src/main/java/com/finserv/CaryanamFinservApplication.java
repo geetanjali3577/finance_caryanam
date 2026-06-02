@@ -11,7 +11,6 @@ public class CaryanamFinservApplication {
         System.out.println("Caryanam Finserv Application started");
         System.out.println("\n\n");
         System.err.println("PORT : localhost8080");
-        //System.err.println("documentation : "+"http://localhost:8080/swagger-ui/index.html#/");
         System.err.println("  *****    *******  *******       *****   *******    *****    ******   *******" );
         System.err.println(" *     *   *      *    *         *           *      *     *   *     *     *   " );
         System.err.println("*       *  *      *    *         *           *     *       *  *     *     *   " );
