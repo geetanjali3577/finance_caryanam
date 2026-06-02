@@ -563,7 +563,7 @@ public class UserServiceImpl implements UserService {
         return "Password reset successfully";
     }
 
-
+//.............................................
     @Override
     public void assignBankAndSendMail(
 
