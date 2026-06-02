@@ -4,6 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import com.finserv.entity.*;
+import jakarta.mail.internet.MimeMessage;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.mail.javamail.MimeMessageHelper;
+
+import java.util.List;
 
 @Service
 public class EmailServiceImpl implements EmailService {
@@ -20,5 +26,93 @@ public class EmailServiceImpl implements EmailService {
         message.setText(body);
 
         mailSender.send(message);
+    }
+
+    @Override
+    public void sendCustomerDetailsToBank(
+
+            Bank bank,
+            User user,
+            PersonalInfo personalInfo,
+            List<Document> documents
+    ) {
+
+        try {
+
+            MimeMessage message =
+                    mailSender.createMimeMessage();
+
+            MimeMessageHelper helper =
+                    new MimeMessageHelper(
+                            message,
+                            true
+                    );
+
+            helper.setTo(bank.getEmail());
+
+            helper.setSubject(
+                    "New Customer Application"
+            );
+
+            String body =
+
+                    "Customer Details\n\n"
+
+                            + "Name : "
+                            + user.getFullName()
+                            + "\n"
+
+                            + "Email : "
+                            + user.getEmail()
+                            + "\n"
+
+                            + "Mobile : "
+                            + user.getMobileNumber()
+                            + "\n\n"
+
+                            + "Address : "
+                            + personalInfo.getAddress()
+                            + "\n"
+
+                            + "City : "
+                            + personalInfo.getCity()
+                            + "\n"
+
+                            + "State : "
+                            + personalInfo.getState()
+                            + "\n"
+
+                            + "Pincode : "
+                            + personalInfo.getPincode()
+                            + "\n"
+
+                            + "Required Loan Amount : "
+                            + personalInfo.getLoanAmount();
+
+            helper.setText(body);
+
+            for (Document doc : documents) {
+
+                if (doc.getFileData() != null) {
+
+                    helper.addAttachment(
+
+                            doc.getFileName(),
+
+                            new ByteArrayResource(
+                                    doc.getFileData()
+                            )
+                    );
+                }
+            }
+
+            mailSender.send(message);
+
+        } catch (Exception e) {
+
+            throw new RuntimeException(
+                    "Mail Sending Failed"
+            );
+        }
     }
 }

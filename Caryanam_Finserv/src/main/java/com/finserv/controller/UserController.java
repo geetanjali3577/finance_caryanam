@@ -464,4 +464,30 @@ public class UserController {
                 userService.resetPassword(dto)
         );
     }
+
+    @PutMapping("/assign-bank/{userId}")
+    public ResponseEntity<ResponseDto> assignBank(
+
+            @PathVariable Long userId,
+
+            @RequestBody AssignBankRequestDTO dto
+    ) {
+
+        userService.assignBankAndSendMail(
+                userId,
+                dto.getBankId()
+        );
+
+        return ResponseEntity.ok(
+
+                new ResponseDto<>(
+
+                        200,
+
+                        "Bank Assigned Successfully And Mail Sent",
+
+                        null
+                )
+        );
+    }
 }

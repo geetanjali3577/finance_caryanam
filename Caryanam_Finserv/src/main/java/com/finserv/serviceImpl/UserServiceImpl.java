@@ -5,13 +5,14 @@ import com.finserv.dto.UserRegisterDTO;
 import com.finserv.dto.UserResponseDTO;
 import com.finserv.dto.VerifyOtpDTO;
 import com.finserv.emailservice.EmailService;
+import com.finserv.entity.Bank;
+import com.finserv.entity.Document;
 import com.finserv.entity.PersonalInfo;
 import com.finserv.entity.User;
 import com.finserv.enums.RegistrationType;
 import com.finserv.enums.Role;
 import com.finserv.enums.UserStatus;
-import com.finserv.repository.DealerRepository;
-import com.finserv.repository.UserRepository;
+import com.finserv.repository.*;
 import com.finserv.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,19 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private BankRepository bankRepository;
+
+    @Autowired
+    private PersonalInfoRepository personalInfoRepository;
+
+    @Autowired
+    private DocumentRepository documentRepository;
+
+
+
+
 
     //====================================================
     // GENERATE APPLICATION ID
@@ -547,6 +561,49 @@ public class UserServiceImpl implements UserService {
         );
 
         return "Password reset successfully";
+    }
+
+
+    @Override
+    public void assignBankAndSendMail(
+
+            Long userId,
+            Long bankId
+    ) {
+
+        User user =
+                userRepository.findById(userId)
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "User Not Found"
+                                ));
+
+        Bank bank =
+                bankRepository.findById(bankId)
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "Bank Not Found"
+                                ));
+
+        PersonalInfo personalInfo =
+                personalInfoRepository
+                        .findByUser_UserId(userId)
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "Personal Info Not Found"
+                                ));
+
+        List<Document> documents =
+                documentRepository
+                        .findByUser_UserId(userId);
+
+        emailService.sendCustomerDetailsToBank(
+
+                bank,
+                user,
+                personalInfo,
+                documents
+        );
     }
 
 }

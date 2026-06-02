@@ -37,4 +37,9 @@ public interface UserService {
     String verifyOtp(VerifyOtpDTO dto);
 
     String resetPassword(ResetPasswordDTO dto);
+
+    void assignBankAndSendMail(
+            Long userId,
+            Long bankId
+    );
 }
