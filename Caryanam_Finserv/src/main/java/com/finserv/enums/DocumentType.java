@@ -1,0 +1,40 @@
+package com.finserv.enums;
+
+public enum DocumentType {
+
+    // ID PROOFS
+    AADHAAR,
+    PAN,
+    PASSPORT,
+    VOTER_ID,
+    DRIVING_LICENSE,
+
+    // ADDRESS PROOFS
+    LIGHT_BILL,
+    RENTAL_AGREEMENT,
+
+
+    // INCOME DOCUMENTS
+    SALARY_SLIP,
+    BANK_STATEMENT,
+    ITR_RETURN,
+    APPOINTMENT_LETTER,
+
+
+    // VEHICLE DOCUMENTS
+    RC,
+    INSURANCE,
+    VEHICLE_INVOICE,
+    VEHICLE_PHOTO,
+    ODOMETER_READING,
+    CHASSIS_NUMBER,
+    CAR_FRONT_SIDE_PHOTO,
+    CAR_BACK_SIDE_PHOTO,
+
+
+
+    // OTHER DOCUMENTS
+
+    PASSPORT_SIZE_PHOTO,
+
+}

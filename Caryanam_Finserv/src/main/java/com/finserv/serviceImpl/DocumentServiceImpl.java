@@ -1,0 +1,338 @@
+package com.finserv.serviceImpl;
+
+import com.finserv.dto.DocumentCountDTO;
+import com.finserv.dto.DocumentResponseDTO;
+import com.finserv.dto.RemarkRequestDTO;
+import com.finserv.entity.Document;
+import com.finserv.entity.User;
+import com.finserv.entity.Dealer;
+import com.finserv.entity.Notification;
+import com.finserv.enums.DocumentStatus;
+import com.finserv.enums.DocumentType;
+import com.finserv.exception.BadRequestException;
+import com.finserv.repository.DocumentRepository;
+import com.finserv.repository.UserRepository;
+import com.finserv.repository.DealerRepository;
+import com.finserv.repository.NotificationRepository;
+import com.finserv.service.DocumentService;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.time.LocalDateTime;
+import java.util.Base64;
+import java.util.List;
+import java.util.Optional;
+
+@Service
+@RequiredArgsConstructor
+public class DocumentServiceImpl implements DocumentService {
+
+    private final DocumentRepository documentRepository;
+    private final UserRepository userRepository;
+    private final DealerRepository dealerRepository;
+    private final NotificationRepository notificationRepository;
+
+    // =====================================
+    // 1. UPLOAD DOCUMENT (FILE / BASE64)
+    // =====================================
+    @Override
+    public Object uploadUnified(
+            Long userId,
+            MultipartFile file,
+            String base64,
+            DocumentType type
+    ) {
+
+        // ======================
+        // USER VALIDATION
+        // ======================
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BadRequestException("User Not Found"));
+
+        // ======================
+        // DUPLICATE CHECK
+        // ======================
+        boolean exists = documentRepository
+                .existsByUser_UserIdAndDocumentType(userId, type);
+
+        if (exists) {
+            throw new BadRequestException(type + " Already Uploaded");
+        }
+
+        try {
+
+            Document document = new Document();
+
+
+            document.setUser(user);
+
+            document.setDocumentType(type);
+            document.setStatus(DocumentStatus.valueOf("PENDING"));
+            document.setUploadedAt(LocalDateTime.now());
+
+            // ======================
+            // FILE UPLOAD
+            // ======================
+            if (file != null && !file.isEmpty()) {
+
+                document.setFileName(file.getOriginalFilename());
+                document.setContentType(file.getContentType());
+                document.setFileSize(file.getSize());
+                document.setFileData(file.getBytes());
+            }
+
+            // ======================
+            // BASE64 UPLOAD
+            // ======================
+            else if (base64 != null && !base64.isBlank()) {
+
+                byte[] decodedBytes;
+
+                try {
+                    decodedBytes = Base64.getDecoder().decode(base64);
+                } catch (IllegalArgumentException e) {
+                    throw new BadRequestException("Invalid Base64 format");
+                }
+
+                document.setFileName(type + ".pdf");
+                document.setContentType("application/pdf");
+                document.setFileSize((long) decodedBytes.length);
+                document.setFileData(decodedBytes);
+            }
+
+            else {
+                throw new BadRequestException("File or Base64 is required");
+            }
+
+            // ======================
+            // SAVE DOCUMENT
+            // ======================
+            Document savedDocument = documentRepository.save(document);
+
+            return mapToDTO(savedDocument);
+
+        } catch (Exception e) {
+            throw new BadRequestException("Document Upload Failed: " + e.getMessage());
+        }
+    }
+
+    // =====================================
+    // 2. GET ALL DOCUMENTS BY USER
+    // =====================================
+    @Override
+    public List<DocumentResponseDTO> getDocumentsByUserId(Long userId) {
+
+        userRepository.findById(userId)
+                .orElseThrow(() -> new BadRequestException("User Not Found"));
+
+        List<Document> documents =
+                documentRepository.findByUser_UserId(userId);
+
+        return documents.stream()
+                .map(this::mapToDTO)
+                .toList();
+    }
+
+    // =====================================
+    // 3. GET SINGLE DOCUMENT
+    // =====================================
+    @Override
+    public DocumentResponseDTO getDocumentById(Long documentId) {
+
+        Document doc = documentRepository.findById(documentId)
+                .orElseThrow(() -> new BadRequestException("Document Not Found"));
+
+        return mapToDTO(doc);
+    }
+
+    // =====================================
+    // MAPPER METHOD
+    // =====================================
+    private DocumentResponseDTO mapToDTO(Document doc) {
+
+        DocumentResponseDTO dto = new DocumentResponseDTO();
+
+        dto.setDocumentId(doc.getDocumentId());
+
+        dto.setUserId(
+                doc.getUser() != null
+                        ? doc.getUser().getUserId()
+                        : null
+        );
+
+        dto.setDocumentType(
+                doc.getDocumentType() != null
+                        ? doc.getDocumentType().name()
+                        : null
+        );
+
+        dto.setFileName(doc.getFileName());
+       // dto.setContentType(doc.getContentType());
+       // dto.setFileSize(doc.getFileSize());
+        dto.setStatus(String.valueOf(doc.getStatus()));
+        dto.setUploadedAt(doc.getUploadedAt());
+        dto.setRemarks(doc.getRemarks());
+
+        return dto;
+    }
+
+    @Override
+    public Document getEntityById(Long documentId) {
+
+        return documentRepository.findById(documentId)
+                .orElseThrow(() -> new RuntimeException("Document Not Found"));
+    }
+
+
+    @Override
+    public void updateStatus(Long documentId,
+                             DocumentStatus status) {
+
+        Document document = documentRepository.findById(documentId)
+                .orElseThrow(() ->
+                        new RuntimeException("Document not found"));
+
+        // APPROVED validation
+        if (status == DocumentStatus.APPROVED &&
+                document.getStatus() != DocumentStatus.VERIFIED) {
+
+            throw new RuntimeException(
+                    "Document must be VERIFIED before APPROVED"
+            );
+        }
+
+        document.setStatus(status);
+
+        documentRepository.save(document);
+
+        User user = document.getUser();
+        if (user != null && user.getDealerCode() != null && !user.getDealerCode().trim().isEmpty()) {
+            Optional<Dealer> optionalDealer = dealerRepository.findByDealerCode(user.getDealerCode());
+            if (optionalDealer.isPresent()) {
+                Dealer dealer = optionalDealer.get();
+                Notification notification = new Notification();
+                notification.setSenderId(1L); // Admin ID
+                notification.setSenderRole("ADMIN");
+                notification.setReceiverId(dealer.getDealerId());
+                notification.setReceiverRole("DEALER");
+                String statusLabel = status == DocumentStatus.APPROVED ? "approved" : 
+                                     (status == DocumentStatus.REJECTED ? "rejected" : "verified");
+                notification.setMessage("Admin " + statusLabel + " " + document.getDocumentType() + " document for " + user.getFullName());
+                notification.setCreatedAt(LocalDateTime.now());
+                notification.setRead(false);
+                notificationRepository.save(notification);
+            }
+        }
+    }
+
+        @Override
+        public void deleteDocument(Long documentId) {
+
+            Document document = documentRepository.findById(documentId)
+                    .orElseThrow(() -> new RuntimeException("Document not found with id: " + documentId));
+
+            documentRepository.delete(document);
+        }
+
+
+    //  UPDATE DOCUMENT
+    @Override
+    public Document updateDocument(Long documentId, MultipartFile file) {
+
+        Document document = documentRepository.findById(documentId)
+                .orElseThrow(() ->
+                        new RuntimeException("Document not found"));
+
+        document.setFileName(file.getOriginalFilename());
+
+        return documentRepository.save(document);
+    }
+
+    //  ADD REMARKS
+    @Override
+    public Document addRemarks(Long documentId, RemarkRequestDTO dto) {
+
+        Document document = documentRepository.findById(documentId)
+                .orElseThrow(() ->
+                        new RuntimeException("Document not found"));
+
+        document.setRemarks(dto.getRemarks());
+
+        Document savedDoc = documentRepository.save(document);
+
+        User user = document.getUser();
+        if (user != null && user.getDealerCode() != null && !user.getDealerCode().trim().isEmpty()) {
+            Optional<Dealer> optionalDealer = dealerRepository.findByDealerCode(user.getDealerCode());
+            if (optionalDealer.isPresent()) {
+                Dealer dealer = optionalDealer.get();
+                Notification notification = new Notification();
+                notification.setSenderId(1L); // Admin ID
+                notification.setSenderRole("ADMIN");
+                notification.setReceiverId(dealer.getDealerId());
+                notification.setReceiverRole("DEALER");
+                notification.setMessage("Admin added remark on " + document.getDocumentType() + " document for " + user.getFullName() + ": " + dto.getRemarks());
+                notification.setCreatedAt(LocalDateTime.now());
+                notification.setRead(false);
+                notificationRepository.save(notification);
+            }
+        }
+
+        return savedDoc;
+    }
+
+    //  GET PENDING DOCUMENTS
+    @Override
+    public List<Document> getPendingDocuments() {
+
+        return documentRepository
+                .findByStatus(DocumentStatus.PENDING);
+    }
+
+    //  GET VERIFIED DOCUMENTS
+    @Override
+    public List<Document> getVerifiedDocuments() {
+
+        return documentRepository
+                .findByStatus(DocumentStatus.VERIFIED);
+    }
+
+
+    //Upload Document count
+
+    @Override
+    public DocumentCountDTO getDocumentCounts(Long userId) {
+
+        long pending =
+                documentRepository.countByUserUserIdAndStatus(
+                        userId,
+                        DocumentStatus.PENDING
+                );
+
+        long verified =
+                documentRepository.countByUserUserIdAndStatus(
+                        userId,
+                        DocumentStatus.VERIFIED
+                );
+
+        long approved =
+                documentRepository.countByUserUserIdAndStatus(
+                        userId,
+                        DocumentStatus.APPROVED
+                );
+
+        long rejected =
+                documentRepository.countByUserUserIdAndStatus(
+                        userId,
+                        DocumentStatus.REJECTED
+                );
+
+        return new DocumentCountDTO(
+                pending,
+                verified,
+                approved,
+                rejected
+        );
+    }
+}
