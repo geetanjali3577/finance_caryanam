@@ -20,4 +20,8 @@ public interface DocumentRepository
 
     List<Document> findByStatus(DocumentStatus status);
     boolean existsByUser_UserIdAndDocumentType(Long userId, DocumentType documentType);
+
+    List<Document> findByStatusAndUser_PaymentDoneTrue(
+            DocumentStatus status
+    );
 }

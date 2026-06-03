@@ -168,7 +168,9 @@ public class PersonalInfoServiceImpl
     @Override
     public List<PersonalInfoResponseDTO> getAllPersonalInfo() {
 
-        List<PersonalInfo> list = personalInfoRepository.findAll();
+        List<PersonalInfo> list =
+                personalInfoRepository
+                        .findAllPaidPersonalInfo();
 
         return list.stream().map(info -> {
 

@@ -49,6 +49,8 @@ public class User {
     )
     private String applicationId;
 
+    private Boolean paymentDone = false;
+
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private PersonalInfo personalInfo;
 

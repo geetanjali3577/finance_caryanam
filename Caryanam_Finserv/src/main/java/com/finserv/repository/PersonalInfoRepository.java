@@ -20,4 +20,12 @@ public interface PersonalInfoRepository extends JpaRepository<PersonalInfo, Long
     Optional<User> findByIdWithPersonalInfo(Long id);
     @Query("SELECT p FROM PersonalInfo p JOIN FETCH p.user")
     List<PersonalInfo> findAllWithUser();
+
+    @Query("""
+       SELECT p
+       FROM PersonalInfo p
+       JOIN FETCH p.user u
+       WHERE u.paymentDone = true
+       """)
+    List<PersonalInfo> findAllPaidPersonalInfo();
 }
