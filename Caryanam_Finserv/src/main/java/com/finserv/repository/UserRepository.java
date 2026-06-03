@@ -23,4 +23,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT u FROM User u LEFT JOIN FETCH u.personalInfo")
     List<User> findAllUsersWithPersonalInfo();
+
+    @Query("""
+       SELECT u
+       FROM User u
+       LEFT JOIN FETCH u.personalInfo
+       WHERE u.paymentDone = true
+       """)
+    List<User> findAllPaidUsers();
 }

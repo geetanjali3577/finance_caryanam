@@ -42,4 +42,6 @@ public interface UserService {
             Long userId,
             Long bankId
     );
+    //.......................
+    void paymentSuccess(Long userId);
 }

@@ -162,25 +162,21 @@ public class UserServiceImpl implements UserService {
 
         user.setStatus(UserStatus.ACTIVE);
 
+        user.setPaymentDone(false);
+
+
         user.setCreatedAt(LocalDateTime.now());
 
-        User savedUser =
-                userRepository.save(user);
 
-        UserResponseDTO response =
-                new UserResponseDTO();
+        User savedUser = userRepository.save(user);
 
-        response.setUserId(
-                savedUser.getUserId()
-        );
+        UserResponseDTO response = new UserResponseDTO();
 
-        response.setApplicationId(
-                savedUser.getApplicationId()
-        );
+        response.setUserId(savedUser.getUserId());
 
-        response.setFullName(
-                savedUser.getFullName()
-        );
+        response.setApplicationId(savedUser.getApplicationId());
+
+        response.setFullName(savedUser.getFullName());
 
         response.setEmail(
                 savedUser.getEmail()
@@ -240,8 +236,7 @@ public class UserServiceImpl implements UserService {
     }
     @Override
     public List<UserResponseDTO> getAllUsers() {
-
-        List<User> users = userRepository.findAllUsersWithPersonalInfo();
+        List<User> users = userRepository.findAllPaidUsers();
 
         return users.stream().map(user -> {
 
@@ -605,5 +600,17 @@ public class UserServiceImpl implements UserService {
                 documents
         );
     }
+     //..........................
+     @Override
+     public void paymentSuccess(Long userId) {
 
+         User user =
+                 userRepository.findById(userId)
+                         .orElseThrow(() ->
+                                 new RuntimeException("User Not Found"));
+
+         user.setPaymentDone(true);
+
+         userRepository.save(user);
+     }
 }
