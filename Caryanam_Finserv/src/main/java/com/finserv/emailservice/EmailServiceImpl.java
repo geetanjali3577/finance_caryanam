@@ -56,7 +56,6 @@ public class EmailServiceImpl implements EmailService {
 
             String body =
                     "Dear Bank Team,\n\n" +
-
                             "A new loan application has been submitted. Please find the customer details below:\n\n" +
 
                             "==============================\n" +
@@ -85,6 +84,21 @@ public class EmailServiceImpl implements EmailService {
                             "Finserv Team";
 
             helper.setText(body);
+
+            for (Document doc : documents) {
+
+                if (doc.getFileData() != null) {
+
+                    helper.addAttachment(
+                            doc.getFileName(),
+                            new ByteArrayResource(
+                                    doc.getFileData()
+                            )
+                    );
+                }
+            }
+
+            mailSender.send(message);
 
         } catch (Exception e) {
 
