@@ -46,6 +46,12 @@ public class DealerController {
                             null
                     ));
         }
+        if (!dto.getFullName().matches("^[A-Za-z]+(?: [A-Za-z]+)*$")) {
+            return ResponseEntity.badRequest()
+                    .body(new ResponseDto<>(400,
+                            "Name must contain only alphabets and spaces (3-50 characters)",
+                            null));
+        }
 
         // FULL NAME CHARACTER LIMIT
         if (dto.getFullName().length() > 30) {
@@ -72,70 +78,48 @@ public class DealerController {
 
         // EMAIL CHARACTER LIMIT
         if (dto.getEmail().length() > 50) {
-
             return ResponseEntity.badRequest()
-                    .body(new ResponseDto<>(
-                            400,
-                            "Email must be maximum 50 characters",
-                            null
-                    ));
+                    .body(new ResponseDto<>(400, "Email must be maximum 50 characters", null));
+        }
+        if (!dto.getEmail().matches("^[A-Za-z0-9._%+-]+@gmail\\.com$")) {
+            return ResponseEntity.badRequest().body(new ResponseDto<>(400, "Only Gmail format allowed", null));
+        }
+        if (dto.getMobileNumber() == null || dto.getMobileNumber().trim().isEmpty()) {
+            return ResponseEntity.badRequest()
+                    .body(new ResponseDto<>(400, "Mobile Number is Required", null));
+        }
+        if (!dto.getMobileNumber() .matches("\\d+")) {
+            return ResponseEntity.badRequest()
+                    .body(new ResponseDto<>(400, "Mobile Number must contain only digits", null));
         }
 
-        // MOBILE VALIDATION
-        if (dto.getMobileNumber() == null
-                || dto.getMobileNumber().trim().isEmpty()) {
 
+        if (dto.getMobileNumber() .length() != 10) {
             return ResponseEntity.badRequest()
-                    .body(new ResponseDto<>(
-                            400,
-                            "Mobile Number is Required",
-                            null
-                    ));
+                    .body(new ResponseDto<>(400, "Mobile Number must be exactly 10 digits", null));
         }
-
-        // MOBILE NUMBER LIMIT
-        if (dto.getMobileNumber().length() > 10) {
-
+        if (!dto.getMobileNumber() .matches("^[6-9]\\d{9}$")) {
             return ResponseEntity.badRequest()
-                    .body(new ResponseDto<>(
-                            400,
-                            "Mobile Number must be maximum 10 digits",
-                            null
-                    ));
+                    .body(new ResponseDto<>(400, "Enter a valid Indian Mobile Number", null));
         }
 
         // PASSWORD VALIDATION
-        if (dto.getPassword() == null
-                || dto.getPassword().trim().isEmpty()) {
-
+        if (dto.getPassword() == null || dto.getPassword().trim().isEmpty()) {
             return ResponseEntity.badRequest()
-                    .body(new ResponseDto<>(
-                            400,
-                            "Password is Required",
-                            null
-                    ));
+                    .body(new ResponseDto<>(400, "Password is Required", null));
         }
 
-        // PASSWORD CHARACTER LIMIT
+
         if (dto.getPassword().length() > 20) {
 
             return ResponseEntity.badRequest()
-                    .body(new ResponseDto<>(
-                            400,
-                            "Password must be maximum 20 characters",
-                            null
-                    ));
+                    .body(new ResponseDto<>(400, "Password must be maximum 20 characters", null));
         }
 
-        DealerResponseDTO response =
-                dealerService.registerDealer(dto);
+        DealerResponseDTO response = dealerService.registerDealer(dto);
 
         return ResponseEntity.status(201)
-                .body(new ResponseDto<>(
-                        201,
-                        "Dealer Registered Successfully",
-                        response
-                ));
+                .body(new ResponseDto<>(201, "Dealer Registered Successfully", response));
     }
 
     @PostMapping("/send-otp")
@@ -194,10 +178,19 @@ public class DealerController {
             return ResponseEntity.badRequest()
                     .body(new ResponseDto<>(400, "Name is Required", null));
         }
+        if (!dto.getFullName().matches("^[A-Za-z]+(?: [A-Za-z]+)*$")) {
+            return ResponseEntity.badRequest()
+                    .body(new ResponseDto<>(400,
+                            "Name must contain only alphabets and spaces (3-50 characters)",
+                            null));
+        }
 
         if (dto.getEmail() == null || dto.getEmail().trim().isEmpty()) {
             return ResponseEntity.badRequest()
                     .body(new ResponseDto<>(400, "Email is Required", null));
+        }
+        if (!dto.getEmail().matches("^[A-Za-z0-9._%+-]+@gmail\\.com$")) {
+            return ResponseEntity.badRequest().body(new ResponseDto<>(400, "Only Gmail format allowed", null));
         }
 
         if (dto.getMobileNumber() == null || dto.getMobileNumber().trim().isEmpty()) {
@@ -205,19 +198,33 @@ public class DealerController {
                     .body(new ResponseDto<>(400, "Mobile Number is Required", null));
         }
 
+        if (!dto.getMobileNumber() .matches("\\d+")) {
+            return ResponseEntity.badRequest()
+                    .body(new ResponseDto<>(400, "Mobile Number must contain only digits", null));
+        }
+
+
+        if (dto.getMobileNumber() .length() != 10) {
+            return ResponseEntity.badRequest()
+                    .body(new ResponseDto<>(400, "Mobile Number must be exactly 10 digits", null));
+        }
+
+
+        if (!dto.getMobileNumber() .matches("^[6-9]\\d{9}$")) {
+            return ResponseEntity.badRequest()
+                    .body(new ResponseDto<>(400, "Enter a valid Indian Mobile Number", null));
+        }
+
         DealerResponseDTO response = dealerService.updateDealer(id, dto);
 
         return ResponseEntity.ok(
-                new ResponseDto<>(200, "Dealer Updated Successfully", response)
-        );
+                new ResponseDto<>(200, "Dealer Updated Successfully", response));
     }
 
     // ================= GET ALL DEALERS =================
     @GetMapping("/all")
     public ResponseEntity<ResponseDto<List<DealerResponseDTO>>> getAllDealers() {
         List<DealerResponseDTO> response = dealerService.getAllDealers();
-        return ResponseEntity.ok(
-                new ResponseDto<>(200, "All Dealers Fetched Successfully", response)
-        );
+        return ResponseEntity.ok(new ResponseDto<>(200, "All Dealers Fetched Successfully", response));
     }
 }
