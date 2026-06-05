@@ -210,6 +210,27 @@ public class DealerServiceImpl implements DealerService {
 
             return "Please verify OTP first";
         }
+        // New Password Required
+        if (dto.getNewPassword() == null
+                || dto.getNewPassword().trim().isEmpty()) {
+
+            return "New Password is Required";
+        }
+
+        // Password Length Validation
+        if (dto.getNewPassword().length() < 8) {
+            return "Password must be at least 8 characters";
+        }
+
+        // Same Password Validation
+        if (passwordEncoder.matches(
+                dto.getNewPassword(),
+                dealer.getPassword())) {
+
+            return "New Password cannot be same as Old Password";
+        }
+
+
 
         // update password
         dealer.setPassword(
