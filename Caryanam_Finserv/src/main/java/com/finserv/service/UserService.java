@@ -21,7 +21,7 @@ public interface UserService {
     //========================================
     String generateApplicationId();
 
-
+    UserResponseDTO searchByEmail(String email);
     UserResponseDTO getUserById(Long id);
 
     List<UserResponseDTO> getAllUsers();

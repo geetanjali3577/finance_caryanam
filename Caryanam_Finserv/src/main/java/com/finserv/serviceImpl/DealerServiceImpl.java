@@ -36,7 +36,7 @@ public class DealerServiceImpl implements DealerService {
     @Autowired
     private EmailService emailService;
 
-    // ================= REGISTER DEALER =================
+
     @Override
     public DealerResponseDTO registerDealer(DealerRegisterDTO dto) {
 
@@ -67,10 +67,6 @@ public class DealerServiceImpl implements DealerService {
                 .createdAt(savedDealer.getCreatedAt())
                 .build();
     }
-
-    // =====================================
-    // SEND OTP
-    // =====================================
 
     @Override
     public String sendOtp(String email) {
@@ -151,10 +147,6 @@ public class DealerServiceImpl implements DealerService {
         return "OTP sent successfully";
     }
 
-    // =====================================
-    // VERIFY OTP
-    // =====================================
-
     @Override
     public String verifyOtp(VerifyOtpDTO dto) {
 
@@ -188,10 +180,6 @@ public class DealerServiceImpl implements DealerService {
 
         return "OTP verified successfully";
     }
-
-    // =====================================
-    // RESET PASSWORD
-    // =====================================
 
     @Override
     public String resetPassword(ResetPasswordDTO dto) {
@@ -326,4 +314,28 @@ public class DealerServiceImpl implements DealerService {
                 .createdAt(d.getCreatedAt())
                 .build()).toList();
     }
+
+    @Override
+    public DealerResponseDTO searchByDealerCode(String dealerCode) {
+
+        Dealer dealer = dealerRepository
+                .findByDealerCode(dealerCode)
+                .orElseThrow(() ->
+                        new RuntimeException("Dealer not found"));
+
+        return mapToDealerResponseDTO(dealer);
+    }
+
+    private DealerResponseDTO mapToDealerResponseDTO(Dealer dealer) {
+
+        return DealerResponseDTO.builder()
+                .dealerId(dealer.getDealerId())
+                .dealerCode(dealer.getDealerCode())
+                .fullName(dealer.getFullName())
+                .email(dealer.getEmail())
+                .mobileNumber(dealer.getMobileNumber())
+                .createdAt(dealer.getCreatedAt())
+                .build();
+    }
+
 }

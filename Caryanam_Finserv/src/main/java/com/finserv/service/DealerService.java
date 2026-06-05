@@ -18,4 +18,6 @@ public interface DealerService {
 
     List<DealerResponseDTO> getAllDealers();
 
+    DealerResponseDTO searchByDealerCode(String dealerCode);
+
 }
