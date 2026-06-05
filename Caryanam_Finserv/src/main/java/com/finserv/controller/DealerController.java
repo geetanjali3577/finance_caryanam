@@ -177,4 +177,14 @@ public class DealerController {
         List<DealerResponseDTO> response = dealerService.getAllDealers();
         return ResponseEntity.ok(new ResponseDto<>(200, "All Dealers Fetched Successfully", response));
     }
+
+    @GetMapping("/search/dealer-code")
+    public ResponseEntity<DealerResponseDTO> searchByDealerCode(@RequestParam String dealerCode)
+    {
+
+        DealerResponseDTO dealer =
+                dealerService.searchByDealerCode(dealerCode);
+
+        return ResponseEntity.ok(dealer);
+    }
 }

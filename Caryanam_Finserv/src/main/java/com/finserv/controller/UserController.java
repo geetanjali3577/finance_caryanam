@@ -501,4 +501,14 @@ public class UserController {
                 "Payment Successful"
         );
     }
+
+    @GetMapping("/search/email")
+    public ResponseEntity<UserResponseDTO> searchByEmail(
+            @RequestParam String email) {
+
+        UserResponseDTO user =
+                userService.searchByEmail(email);
+
+        return ResponseEntity.ok(user);
+    }
 }
