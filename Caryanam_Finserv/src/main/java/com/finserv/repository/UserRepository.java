@@ -32,4 +32,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
        ORDER BY u.userId DESC
        """)
     List<User> findAllPaidUsers();
+
+    List<User> findByDealerCode(String dealerCode);
 }

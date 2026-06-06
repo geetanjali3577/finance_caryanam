@@ -6,6 +6,7 @@ import com.finserv.enums.DocumentType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 
 @Repository
@@ -24,4 +25,11 @@ public interface DocumentRepository
     List<Document> findByStatusAndUser_PaymentDoneTrue(
             DocumentStatus status
     );
+
+    List<Document> findByUser_UserIdAndStatus(Long userId, DocumentStatus documentStatus);
+
+    List<Document> findByUser_DealerCodeAndStatus(String dealerCode, DocumentStatus documentStatus);
+
+
+    List<Document> findByUser_DealerCode(String dealerCode);
 }
