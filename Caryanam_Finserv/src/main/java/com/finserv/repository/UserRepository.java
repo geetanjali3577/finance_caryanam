@@ -29,6 +29,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
        FROM User u
        LEFT JOIN FETCH u.personalInfo
        WHERE u.paymentDone = true
+       ORDER BY u.userId DESC
        """)
     List<User> findAllPaidUsers();
 }
