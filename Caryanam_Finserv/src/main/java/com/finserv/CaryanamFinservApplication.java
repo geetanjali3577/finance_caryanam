@@ -8,7 +8,7 @@ public class CaryanamFinservApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(CaryanamFinservApplication.class, args);
-        System.out.println("Caryanam Finserv Application started");
+        System.out.println("VahanFinserv Application started");
         System.out.println("\n\n");
         System.err.println("PORT : localhost8080");
         System.err.println("  *****    *******  *******       *****   *******    *****    ******   *******" );
