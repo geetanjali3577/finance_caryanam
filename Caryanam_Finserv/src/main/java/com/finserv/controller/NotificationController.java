@@ -1,6 +1,4 @@
-// ==========================================
-// Notification Controller
-// ==========================================
+
 
 package com.finserv.controller;
 
@@ -21,20 +19,12 @@ public class NotificationController {
      @Autowired
     private NotificationService notificationService;
 
-    // ======================================
-    // Send Notification
-    // ======================================
-
-    @PostMapping("/send")
+     @PostMapping("/send")
     public Notification sendNotification(
             @RequestBody NotificationRequestDTO dto) {
 
         return notificationService.sendNotification(dto);
     }
-
-    // ======================================
-    // Get Notifications
-    // ======================================
 
     @GetMapping("/{receiverId}")
     public List<Notification> getNotifications(
@@ -42,10 +32,6 @@ public class NotificationController {
 
         return notificationService.getUserNotifications(receiverId);
     }
-
-    // ======================================
-    // Mark as Read
-    // ======================================
 
     @PutMapping("/read/{notificationId}")
     public Notification markAsRead(
