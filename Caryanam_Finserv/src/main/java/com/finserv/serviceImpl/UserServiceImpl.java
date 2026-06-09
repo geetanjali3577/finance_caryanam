@@ -496,9 +496,6 @@ public class UserServiceImpl implements UserService {
         return "OTP verified successfully";
     }
 
-    // ==============================
-    // RESET PASSWORD
-    // ==============================
 
     @Override
     public String resetPassword(ResetPasswordDTO dto) {
@@ -524,7 +521,7 @@ public class UserServiceImpl implements UserService {
         }
 
         // Password Length Validation
-        if (dto.getNewPassword().length() < 8) {
+        if (dto.getNewPassword().length() < 4) {
             return "Password must be at least 8 characters";
         }
 

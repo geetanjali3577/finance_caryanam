@@ -206,7 +206,7 @@ public class DealerServiceImpl implements DealerService {
         }
 
         // Password Length Validation
-        if (dto.getNewPassword().length() < 8) {
+        if (dto.getNewPassword().length() < 4) {
             return "Password must be at least 8 characters";
         }
 

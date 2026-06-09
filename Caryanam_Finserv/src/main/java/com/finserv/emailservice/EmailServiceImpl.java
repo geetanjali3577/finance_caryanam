@@ -28,18 +28,41 @@ public class EmailServiceImpl implements EmailService {
 //        mailSender.send(message);
 //    }
 
+//    @Override
+//    public void sendMail(String to, String subject, String body) {
+//
+//        SimpleMailMessage message = new SimpleMailMessage();
+//
+//        message.setFrom("support@vahanfinserv.com"); // Add this
+//
+//        message.setTo(to);
+//        message.setSubject(subject);
+//        message.setText(body);
+//
+//        mailSender.send(message);
+//    }
+
     @Override
     public void sendMail(String to, String subject, String body) {
 
-        SimpleMailMessage message = new SimpleMailMessage();
+        try {
 
-        message.setFrom("support@vahanfinserv.com"); // Add this
+            SimpleMailMessage message = new SimpleMailMessage();
 
-        message.setTo(to);
-        message.setSubject(subject);
-        message.setText(body);
+            message.setFrom("support@vahanfinserv.com");
+            message.setTo(to);
+            message.setSubject(subject);
+            message.setText(body);
 
-        mailSender.send(message);
+            mailSender.send(message);
+
+            System.out.println("MAIL SENT SUCCESSFULLY");
+
+        } catch (Exception e) {
+
+            System.out.println("MAIL FAILED");
+            e.printStackTrace();
+        }
     }
 
     @Override
