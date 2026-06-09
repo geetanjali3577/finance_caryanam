@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/personal-info")
+@RequestMapping("/api/personal-info")
 @RequiredArgsConstructor
 public class PersonalInfoController {
 
@@ -23,6 +23,7 @@ public class PersonalInfoController {
     //====================================================
     // SAVE PERSONAL INFO
     //====================================================
+    //USER
     @PostMapping("/save")
     public ResponseEntity<ResponseDto<?>> savePersonalInfo(
 
@@ -236,7 +237,7 @@ public class PersonalInfoController {
     }
 
     // UPADTED INFO
-
+// USER
     @PutMapping("/update/{userId}")
     public ResponseEntity<ResponseDto<PersonalInfoResponseDTO>> updatePersonalInfo(
             @PathVariable Long userId,
@@ -252,7 +253,7 @@ public class PersonalInfoController {
     }
 
 
-
+//ADMIN
     @GetMapping("/all")
     public ResponseEntity<ResponseDto<List<PersonalInfoResponseDTO>>> getAllPersonalInfo() {
 

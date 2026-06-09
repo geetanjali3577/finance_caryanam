@@ -29,7 +29,7 @@ public class DocumentController {
 
 
     // UPLOAD DOCUMENT
-
+    //USER DEALER
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ResponseDto<?>> uploadDocument(
             @RequestParam("userId") Long userId,
@@ -178,6 +178,8 @@ public class DocumentController {
     // =====================================
     // 2. GET ALL DOCUMENTS BY USER
     // =====================================
+
+    //ADMIN
     @GetMapping("/user/{userId}")
     public ResponseEntity<ResponseDto<List<DocumentResponseDTO>>> getByUserId(
             @PathVariable Long userId
@@ -198,6 +200,8 @@ public class DocumentController {
     // =====================================
     // 3. GET SINGLE DOCUMENT
     // =====================================
+
+    //ADMIN
     @GetMapping("/{documentId}")
     public ResponseEntity<ResponseDto<DocumentResponseDTO>> getByDocumentId(
             @PathVariable Long documentId
@@ -215,7 +219,7 @@ public class DocumentController {
         );
     }
 
-
+    //ADMIN USER
     @GetMapping("/download/{documentId}")
     public ResponseEntity<byte[]> downloadDocument(
             @PathVariable Long documentId) {
@@ -236,7 +240,7 @@ public class DocumentController {
                 .body(document.getFileData());
     }
 
-
+    //ADMIN
     @PutMapping("/status/{documentId}")
     public ResponseEntity<ResponseDto<String>> updateStatus(
 
@@ -255,7 +259,7 @@ public class DocumentController {
         );
     }
 
-
+//ALL
     @GetMapping("/preview/{documentId}")
     public ResponseEntity<byte[]> previewDocument(@PathVariable Long documentId) {
 
@@ -267,7 +271,7 @@ public class DocumentController {
                 .body(doc.getFileData());
     }
 
-
+    //ADMIN USER
     @DeleteMapping("/{documentId}")
     public ResponseEntity<ResponseDto> deleteDocument(
             @PathVariable Long documentId) {
@@ -284,6 +288,7 @@ public class DocumentController {
     }
 
 
+//USER DEALER
     //  UPDATE DOCUMENT
     @PutMapping("/{documentId}")
     public ResponseEntity<ResponseDto> updateDocument(
@@ -303,7 +308,8 @@ public class DocumentController {
         );
     }
 
-    //  ADD REMARKS USER TO ADMIN
+    //ADMIN
+    // ADD REMARKS USER TO ADMIN
     @PutMapping("/{documentId}/remarks")
     public ResponseEntity<ResponseDto> addRemarks(
 
@@ -323,6 +329,7 @@ public class DocumentController {
         );
     }
 
+    //ADMIN
     // GET PENDING DOCUMENTS TO ADMIN
     @GetMapping("/pending")
     public ResponseEntity<ResponseDto> getPendingDocuments() {
@@ -339,6 +346,8 @@ public class DocumentController {
         );
     }
 
+
+    //ADMIN
     //  GET VERIFIED DOCUMENTS TO ADMIN
     @GetMapping("/verified")
     public ResponseEntity<ResponseDto> getVerifiedDocuments() {
@@ -355,6 +364,7 @@ public class DocumentController {
         );
     }
 
+    //ALL
     @GetMapping("/count/{userId}")
     public ResponseEntity<ResponseDto> getDocumentCounts(
             @PathVariable Long userId) {

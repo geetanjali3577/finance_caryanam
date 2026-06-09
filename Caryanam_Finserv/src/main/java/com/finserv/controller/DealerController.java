@@ -16,11 +16,13 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/dealer")
 @RequiredArgsConstructor
 public class DealerController {
-
+//ALL DEALER END POINTS
     private final DealerService dealerService;
     private final DealerRepository dealerRepository;
 
     // ================= REGISTER DEALER =================
+
+    //DEALER
     @PostMapping("/register")
     public ResponseEntity<ResponseDto<DealerResponseDTO>> registerDealer(
             @RequestBody DealerRegisterDTO dto) {
@@ -172,12 +174,14 @@ public class DealerController {
     }
 
     // ================= GET ALL DEALERS =================
+    //ADMIN
     @GetMapping("/all")
     public ResponseEntity<ResponseDto<List<DealerResponseDTO>>> getAllDealers() {
         List<DealerResponseDTO> response = dealerService.getAllDealers();
         return ResponseEntity.ok(new ResponseDto<>(200, "All Dealers Fetched Successfully", response));
     }
 
+    //ADMIN
     @GetMapping("/search/dealer-code")
     public ResponseEntity<DealerResponseDTO> searchByDealerCode(@RequestParam String dealerCode)
     {

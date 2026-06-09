@@ -6,6 +6,7 @@ import com.finserv.dto.BankResponseDto;
 import com.finserv.service.BankService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -15,7 +16,13 @@ import java.util.List;
 @CrossOrigin("*")
 public class BankController {
 
+    //ONLY ADMIN
     private final BankService bankService;
+
+    @GetMapping("/api/admin/profile")
+    public ResponseEntity<?> profile(Authentication auth) {
+        return ResponseEntity.ok(auth.getPrincipal());
+    }
 
     // ADD BANK
     @PostMapping

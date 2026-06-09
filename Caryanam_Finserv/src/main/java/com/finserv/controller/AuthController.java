@@ -19,6 +19,7 @@ public class AuthController {
     // =====================================================
     // LOGIN API
     // =====================================================
+    //ALL
     @PostMapping("/login")
     public ResponseEntity<ResponseDto<LoginResponseDTO>> login(
             @RequestBody LoginRequestDTO request) {

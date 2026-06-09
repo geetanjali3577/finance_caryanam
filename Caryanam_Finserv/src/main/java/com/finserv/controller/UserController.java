@@ -28,6 +28,7 @@ public class UserController {
     private final DealerRepository dealerRepository;
 
     @PostMapping("/register")
+    //USER
     public ResponseEntity<ResponseDto<UserResponseDTO>> registerUser(@RequestBody UserRegisterDTO dto) {
 
         // NULL CHECK
@@ -248,6 +249,7 @@ public class UserController {
                     dealerRepository.findByDealerCode(dto.getDealerCode())
                             .orElse(null);
 
+
             if (dealer.getStatus() == DealerStatus.INACTIVE) {
 
                 return ResponseEntity.badRequest()
@@ -273,6 +275,7 @@ public class UserController {
 
     // GET BY ID
 
+    //ADMIN
     @GetMapping("/{id}")
     public ResponseEntity<ResponseDto<UserResponseDTO>> getUserById(@PathVariable Long id) {
 
@@ -290,8 +293,8 @@ public class UserController {
     }
 
     //GET ALL USER
-
     @GetMapping("/all")
+    //ADMIN
     public ResponseEntity<ResponseDto<List<UserResponseDTO>>> getAllUsers() {
 
         List<UserResponseDTO> response = userService.getAllUsers();
@@ -308,7 +311,7 @@ public class UserController {
     }
 
     //UPDATE USER
-
+    //USER/ADMIN
     @PutMapping("/update/{id}")
     public ResponseEntity<ResponseDto<UserResponseDTO>> updateUser(
             @PathVariable Long id,
@@ -406,7 +409,7 @@ public class UserController {
     }
     */
 
-
+//ADMIN
     @GetMapping("/search")
     public ResponseEntity<ResponseDto<List<UserResponseDTO>>> searchByName(
             @RequestParam String name
@@ -430,6 +433,7 @@ public class UserController {
     // SEND OTP
     // =========================
 
+    //USER
     @PostMapping("/send-otp")
     public ResponseEntity<String> sendOtp(
             @RequestParam String email) {
@@ -443,6 +447,7 @@ public class UserController {
     // VERIFY OTP
     // =========================
 
+    //USER
     @PostMapping("/verify-otp")
     public ResponseEntity<String> verifyOtp(
             @RequestBody VerifyOtpDTO dto) {
@@ -456,6 +461,7 @@ public class UserController {
     // RESET PASSWORD
     // =========================
 
+    //USER
     @PostMapping("/reset-password")
     public ResponseEntity<String> resetPassword(
             @RequestBody ResetPasswordDTO dto) {
@@ -465,6 +471,7 @@ public class UserController {
         );
     }
 
+    //ADMIN
     @PutMapping("/assign-bank/{userId}")
     public ResponseEntity<ResponseDto> assignBank(
 
@@ -491,6 +498,7 @@ public class UserController {
         );
     }
 
+    //ADMIN
     @PutMapping("/payment-success/{userId}")
     public ResponseEntity<String> paymentSuccess(
             @PathVariable Long userId) {
@@ -502,6 +510,7 @@ public class UserController {
         );
     }
 
+    //ADMIN/USER
     @GetMapping("/search/email")
     public ResponseEntity<UserResponseDTO> searchByEmail(
             @RequestParam String email) {

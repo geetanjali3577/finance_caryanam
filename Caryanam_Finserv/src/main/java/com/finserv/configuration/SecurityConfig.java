@@ -1,10 +1,12 @@
 package com.finserv.configuration;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -41,19 +43,99 @@ public class SecurityConfig {
 
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**","/api/auth/login").permitAll()
+
+                                        .requestMatchers(
+                                                "/api/auth/**",
+                                                "/api/user/register",
+                                                "/api/user/send-otp",
+                                                "/api/user/verify-otp",
+                                                "/api/user/reset-password",
+                                                "/api/dealer/register",
+                                                "/api/dealer/send-otp",
+                                                "/api/dealer/verify-otp",
+                                                "/api/dealer/reset-password",
+                                                "/swagger-ui/**",
+                                                "/swagger-ui.html",
+                                                "/v3/api-docs/**"
+                                        ).permitAll()
+
+                                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
+                                        // Admin APIs
+                                        .requestMatchers(
+                                                "/api/user/all",
+                                                "/api/user/search",
+                                                "/api/user/assign-bank/**",
+                                                "/api/user/payment-success/**",
+                                                "/api/dealer/all",
+                                                "/api/dealer/search/dealer-code",
+                                                "/api/admin/current",
+                                                "/api/admin/me",
+                                                "/api/admin/profile",
+                                                "/api/admin/dashboard",
+                                                "/api/admin/banks/**",
+                                                "/api/personal-info/all",
+                                                "/api/documents/status/**",
+                                                "/api/documents/pending",
+                                                "/api/documents/verified",
+                                                "/api/documents/*/remarks"
+                                        ).hasRole("ADMIN")
+
+                                        // User + Admin
+                                        .requestMatchers(
+                                                "/api/user/**",
+                                                "/api/user/update/**",
+                                                "/api/user/search/email"
+                                        ).hasAnyRole("USER", "ADMIN")
+
+                                        // Personal Info
+                                .requestMatchers(
+                                        "/api/personal-info/save",
+                                        "/api/personal-info/**",
+                                        "/api/personal-info/update/**"
+                                ).hasAnyRole("USER","DEALER","ADMIN")
+
+                                .requestMatchers("/api/personal-info/all")
+                                .hasAnyRole("DEALER","ADMIN")
+
+                                        // Documents
+                                        .requestMatchers(
+                                                "/api/documents/upload"
+                                        ).hasAnyRole("USER", "DEALER")
+
+                                        .requestMatchers(
+                                                "/api/documents/count/**",
+                                                "/api/documents/download/**",
+                                                "/api/documents/preview/**",
+                                                "/api/documents/user/**"
+                                        ).hasAnyRole("USER", "DEALER", "ADMIN")
+
+                                        // Notifications
+                                        .requestMatchers("/api/notifications/**")
+                                        .hasAnyRole("USER", "DEALER", "ADMIN")
+
+                                        // Dealer
+                                        .requestMatchers("/api/dealer/**","/api/dealer/all",
+                                                 "/api/dealer/search/dealer-code")
+                                        .hasAnyRole("DEALER", "ADMIN")
+
+                                        // Chatbot
+                                        .requestMatchers("/api/chatbot/**")
+                                        .hasAnyRole("USER", "DEALER", "ADMIN")
+
+                                .requestMatchers(
+                                        "/api/user/all",
+                                        "/api/user/search"
+                                ).hasAnyRole("DEALER","ADMIN")
+
+                                .requestMatchers(
+                                        "/api/user/assign-bank/**",
+                                        "/api/user/payment-success/**"
+                                ).hasRole("ADMIN")
+                                        .anyRequest().authenticated()
+                                )
 
 
-                        .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/api/dealer/**","/api/dealer/register" ).permitAll()
-                        .requestMatchers("/api/user/**","/api/user/register").permitAll()
-                        .requestMatchers("/api/**","/api/banks").permitAll()
-                        .requestMatchers("/api/customer/**","/api/customer/save").permitAll()
-                        .requestMatchers("/api/loan/**","/api/loan/save").permitAll()
-                        .requestMatchers("/api/vehicle/**","/api/vehicle/save").permitAll()
-                        .requestMatchers("/api/documents/**","/api/documents/upload").permitAll()
-                        .anyRequest().authenticated()
-                )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
@@ -88,31 +170,25 @@ public class SecurityConfig {
     }
 
     // 🔥🔥🔥 FINAL CORS FIX
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
 
         CorsConfiguration config = new CorsConfiguration();
-
-        // 🔥 IMPORTANT FIX (handles credentials + avoids CORS issues)
-        config.setAllowedOriginPatterns(Arrays.asList("*"));
-
-        config.setAllowedMethods(Arrays.asList(
-                "GET", "POST", "PUT", "DELETE", "OPTIONS"
+        config.setAllowedOrigins(List.of(
+                "http://localhost:5173",
+                "http://localhost:3000",
+                "http://localhost:63342",
+                "https://v1.vahanfinserv.com, " ,
+                "https://vahanfinserv.com"
         ));
-
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(Arrays.asList("*"));
-
         config.setAllowCredentials(true);
-
         config.setExposedHeaders(Arrays.asList("Authorization"));
-
         config.setMaxAge(3600L);
-
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-
-        // 🔥 CRITICAL LINE (apply to all endpoints)
         source.registerCorsConfiguration("/**", config);
-
         return source;
     }
 }

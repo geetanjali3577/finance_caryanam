@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class ChatbotController {
 
+    //ALL
     private final ChatbotService chatbotService;
 
     @GetMapping("/user/application-summary")

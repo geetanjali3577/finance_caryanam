@@ -19,6 +19,7 @@ public class NotificationController {
      @Autowired
     private NotificationService notificationService;
 
+     //ALL
      @PostMapping("/send")
     public Notification sendNotification(
             @RequestBody NotificationRequestDTO dto) {
@@ -26,6 +27,7 @@ public class NotificationController {
         return notificationService.sendNotification(dto);
     }
 
+    //ALL
     @GetMapping("/{receiverId}")
     public List<Notification> getNotifications(
             @PathVariable Long receiverId) {
@@ -33,6 +35,7 @@ public class NotificationController {
         return notificationService.getUserNotifications(receiverId);
     }
 
+    //ALL
     @PutMapping("/read/{notificationId}")
     public Notification markAsRead(
             @PathVariable Long notificationId) {
