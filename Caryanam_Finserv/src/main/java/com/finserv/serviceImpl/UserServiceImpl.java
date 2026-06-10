@@ -48,13 +48,6 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private DocumentRepository documentRepository;
 
-
-
-
-
-    //====================================================
-    // GENERATE APPLICATION ID
-    //====================================================
     @Override
     public String generateApplicationId() {
 
@@ -82,9 +75,7 @@ public class UserServiceImpl implements UserService {
         );
     }
 
-    //====================================================
-    // REGISTER USER
-    //====================================================
+
     @Override
     public UserResponseDTO registerUser(UserRegisterDTO dto) {
 
@@ -213,7 +204,7 @@ public class UserServiceImpl implements UserService {
 
         UserResponseDTO dto = new UserResponseDTO();
 
-        // USER DATA
+
         dto.setUserId(user.getUserId());
         dto.setFullName(user.getFullName());
         dto.setEmail(user.getEmail());
@@ -225,7 +216,7 @@ public class UserServiceImpl implements UserService {
         dto.setRole(user.getRole() != null ? user.getRole().name() : null);
         dto.setCreatedAt(user.getCreatedAt());
 
-        // PERSONAL INFO (SAFE NULL CHECK)
+
         if (user.getPersonalInfo() != null && user.getPersonalInfo().getMobileNumber() != null) {
             dto.setMobileNumber(user.getPersonalInfo().getMobileNumber());
         } else {
@@ -340,16 +331,6 @@ public class UserServiceImpl implements UserService {
     }
 
 
-  /*  @Override
-    public void deleteUser(Long id) {
-
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User Not Found"));
-
-        userRepository.delete(user);
-    }
-*/
-    // mapper
     private UserResponseDTO mapToDTO(User user) {
 
         UserResponseDTO dto = new UserResponseDTO();
@@ -390,9 +371,7 @@ public class UserServiceImpl implements UserService {
     }
 
 
-    // ==============================
-    // SEND OTP
-    // ==============================
+
 
     @Override
     public String sendOtp(String email) {
@@ -454,9 +433,7 @@ public class UserServiceImpl implements UserService {
         return "OTP sent successfully";
     }
 
-    // ==============================
-    // VERIFY OTP
-    // ==============================
+
 
     @Override
     public String verifyOtp(VerifyOtpDTO dto) {
@@ -573,7 +550,7 @@ public class UserServiceImpl implements UserService {
         return "Password reset successfully";
     }
 
-//.............................................
+
     @Override
     public void assignBankAndSendMail(
 
@@ -615,7 +592,7 @@ public class UserServiceImpl implements UserService {
                 documents
         );
     }
-     //..........................
+
      @Override
      public void paymentSuccess(Long userId) {
 
