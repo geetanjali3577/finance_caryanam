@@ -81,7 +81,8 @@ public class SecurityConfig {
                                                 "/api/documents/verified",
                                                 "/api/documents/*/remarks"
                                         ).hasRole("ADMIN")
-
+                                       .requestMatchers("/api/user/dealer/**")
+                                        .permitAll()
                                         // User + Admin
                                         .requestMatchers(
                                                 "/api/user/**",
@@ -133,6 +134,7 @@ public class SecurityConfig {
                                         "/api/user/assign-bank/**",
                                         "/api/user/payment-success/**"
                                 ).hasRole("ADMIN")
+
                                         .anyRequest().authenticated()
                                 )
 
