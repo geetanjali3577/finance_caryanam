@@ -61,7 +61,7 @@ public class DealerController {
             return ResponseEntity.badRequest()
                     .body(new ResponseDto<>(400, "Email must be maximum 50 characters", null));
         }
-        if (!dto.getEmail().matches("^[A-Za-z0-9._%+-]+@gmail\\.com$")) {
+        if (!dto.getEmail().matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
             return ResponseEntity.badRequest().body(new ResponseDto<>(400, "Only Gmail format allowed", null));
         }
         if (dto.getMobileNumber() == null || dto.getMobileNumber().trim().isEmpty()) {
