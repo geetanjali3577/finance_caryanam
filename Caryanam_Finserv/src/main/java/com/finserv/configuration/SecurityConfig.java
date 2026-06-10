@@ -33,12 +33,13 @@ public class SecurityConfig {
     @Autowired
     private CustomUserDetailsService userDetailsService;
 
-    // ✅ Security Filter
+
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception
+    {
 
         http
-                // 🔥 ENABLE CORS (FIXED)
+
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
 
                 .csrf(csrf -> csrf.disable())
@@ -146,13 +147,12 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // ✅ Authentication Manager
+
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 
-    // ✅ Authentication Provider
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider =
@@ -163,13 +163,10 @@ public class SecurityConfig {
         return provider;
     }
 
-    // ✅ Password Encoder
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
-    // 🔥🔥🔥 FINAL CORS FIX
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {

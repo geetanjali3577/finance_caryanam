@@ -454,8 +454,28 @@ public class UserController {
         );
     }
     */
-      @GetMapping("/search-by-bank")
+      @GetMapping("/search" +
+              "-by-bank")
       public ResponseEntity<List<UserResponseDTO>> searchUsersByBank(@RequestParam String bankName) {
           return ResponseEntity.ok(userService.searchUsersByBank(bankName));
       }
+
+    @GetMapping("/history")
+    public ResponseEntity<List<PaymentHistoryDTO>>
+    getPaymentHistory() {
+
+        return ResponseEntity.ok(
+                userService.getPaymentHistory()
+        );
+    }
+
+    @GetMapping("/history/{userId}")
+    public ResponseEntity<PaymentHistoryDTO>
+    getPaymentDetails(
+            @PathVariable Long userId) {
+
+        return ResponseEntity.ok(
+                userService.getPaymentDetails(userId)
+        );
+    }
 }

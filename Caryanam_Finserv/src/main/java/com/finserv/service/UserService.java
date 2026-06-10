@@ -1,9 +1,6 @@
 package com.finserv.service;
 
-import com.finserv.dto.ResetPasswordDTO;
-import com.finserv.dto.UserRegisterDTO;
-import com.finserv.dto.UserResponseDTO;
-import com.finserv.dto.VerifyOtpDTO;
+import com.finserv.dto.*;
 
 import java.util.List;
 
@@ -46,4 +43,8 @@ public interface UserService {
     void paymentSuccess(Long userId);
 
     List<UserResponseDTO> searchUsersByBank(String bankName);
+
+    List<PaymentHistoryDTO> getPaymentHistory();
+
+    PaymentHistoryDTO getPaymentDetails(Long userId);
 }

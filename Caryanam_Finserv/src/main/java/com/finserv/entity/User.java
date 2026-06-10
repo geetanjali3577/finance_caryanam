@@ -67,4 +67,8 @@ public class User {
     @ManyToOne
     @JoinColumn(name = "bank_id")
     private Bank bank;
+
+    private LocalDateTime getUpdatedAt;
+
+
 }

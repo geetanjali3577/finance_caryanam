@@ -1,9 +1,6 @@
 package com.finserv.serviceImpl;
 
-import com.finserv.dto.ResetPasswordDTO;
-import com.finserv.dto.UserRegisterDTO;
-import com.finserv.dto.UserResponseDTO;
-import com.finserv.dto.VerifyOtpDTO;
+import com.finserv.dto.*;
 import com.finserv.emailservice.EmailService;
 import com.finserv.entity.Bank;
 import com.finserv.entity.Document;
@@ -643,6 +640,60 @@ public class UserServiceImpl implements UserService {
             return dto;
 
         }).toList();
+    }
+
+    @Override
+    public List<PaymentHistoryDTO> getPaymentHistory() {
+
+        List<User> users = userRepository.findAllPaymentHistory();
+
+        return users.stream().map(user -> {
+
+            PaymentHistoryDTO dto = new PaymentHistoryDTO();
+
+            dto.setUserId(user.getUserId());
+            dto.setApplicationId(user.getApplicationId());
+            dto.setFullName(user.getFullName());
+            dto.setEmail(user.getEmail());
+            dto.setMobileNumber(user.getMobileNumber());
+
+            dto.setPaymentStatus(
+                    Boolean.TRUE.equals(user.getPaymentDone())
+                            ? "APPROVED"
+                            : "PENDING"
+            );
+
+            dto.setPaymentDate(user.getCreatedAt());
+
+            return dto;
+
+        }).toList();
+    }
+
+    @Override
+    public PaymentHistoryDTO getPaymentDetails(Long userId) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() ->
+                        new RuntimeException("User not found"));
+
+        PaymentHistoryDTO dto = new PaymentHistoryDTO();
+
+        dto.setUserId(user.getUserId());
+        dto.setApplicationId(user.getApplicationId());
+        dto.setFullName(user.getFullName());
+        dto.setEmail(user.getEmail());
+        dto.setMobileNumber(user.getMobileNumber());
+
+        dto.setPaymentStatus(
+                Boolean.TRUE.equals(user.getPaymentDone())
+                        ? "APPROVED"
+                        : "PENDING"
+        );
+
+        dto.setPaymentDate(user.getCreatedAt());
+
+        return dto;
     }
 
 }

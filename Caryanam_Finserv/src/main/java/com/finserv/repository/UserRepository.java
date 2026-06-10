@@ -42,4 +42,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
            LIKE LOWER(CONCAT('%', :bankName, '%'))
            """)
     List<User> searchByBank(@Param("bankName") String bankName);
+
+    @Query("""
+            SELECT u
+            FROM User u
+            ORDER BY u.createdAt DESC
+            """)
+    List<User> findAllPaymentHistory();
 }
