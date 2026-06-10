@@ -22,13 +22,10 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
-
     private final UserRepository userRepository;
-
     private final DealerRepository dealerRepository;
 
     @PostMapping("/register")
-    //USER
     public ResponseEntity<ResponseDto<UserResponseDTO>> registerUser(@RequestBody UserRegisterDTO dto) {
 
         // NULL CHECK
@@ -273,9 +270,6 @@ public class UserController {
                 ));
     }
 
-    // GET BY ID
-
-    //ADMIN
     @GetMapping("/{id}")
     public ResponseEntity<ResponseDto<UserResponseDTO>> getUserById(@PathVariable Long id) {
 
@@ -292,9 +286,7 @@ public class UserController {
         );
     }
 
-    //GET ALL USER
     @GetMapping("/all")
-    //ADMIN
     public ResponseEntity<ResponseDto<List<UserResponseDTO>>> getAllUsers() {
 
         List<UserResponseDTO> response = userService.getAllUsers();
@@ -310,13 +302,8 @@ public class UserController {
         );
     }
 
-    //UPDATE USER
-    //USER/ADMIN
     @PutMapping("/update/{id}")
-    public ResponseEntity<ResponseDto<UserResponseDTO>> updateUser(
-            @PathVariable Long id,
-            @RequestBody UserRegisterDTO dto
-    ) {
+    public ResponseEntity<ResponseDto<UserResponseDTO>> updateUser(@PathVariable Long id, @RequestBody UserRegisterDTO dto) {
 
         // ======================
         // 1. ID VALIDATION
@@ -392,7 +379,66 @@ public class UserController {
                 new ResponseDto<>(200, "User Updated Successfully", response)
         );
     }
-     /*   // DELETE USER
+
+    @GetMapping("/search")
+    public ResponseEntity<ResponseDto<List<UserResponseDTO>>> searchByName(@RequestParam String name) {
+
+        List<UserResponseDTO> response = userService.searchByName(name);
+
+        if (response.isEmpty()) {
+            return ResponseEntity.ok(
+                    new ResponseDto<>(200, "No Users Found with given name", response)
+            );
+        }
+
+        return ResponseEntity.ok(
+                new ResponseDto<>(200, "Users Found Successfully", response)
+        );
+    }
+
+    @PostMapping("/send-otp")
+    public ResponseEntity<String> sendOtp(@RequestParam String email) {
+
+        return ResponseEntity.ok(
+                userService.sendOtp(email)
+        );
+    }
+
+    @PostMapping("/verify-otp")
+    public ResponseEntity<String> verifyOtp(@RequestBody VerifyOtpDTO dto) {
+
+        return ResponseEntity.ok(
+                userService.verifyOtp(dto)
+        );
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<String> resetPassword(@RequestBody ResetPasswordDTO dto) {
+        return ResponseEntity.ok(userService.resetPassword(dto));
+    }
+
+
+    @PutMapping("/assign-bank/{userId}")
+    public ResponseEntity<ResponseDto> assignBank(@PathVariable Long userId, @RequestBody AssignBankRequestDTO dto) {
+        userService.assignBankAndSendMail(userId, dto.getBankId());
+        return ResponseEntity.ok(new ResponseDto<>(200, "Bank Assigned Successfully And Mail Sent", null));
+    }
+
+    //ADMIN
+    @PutMapping("/payment-success/{userId}")
+    public ResponseEntity<String> paymentSuccess(@PathVariable Long userId) {
+        userService.paymentSuccess(userId);
+        return ResponseEntity.ok("Payment Successful");
+    }
+
+    //ADMIN/USER
+    @GetMapping("/search/email")
+    public ResponseEntity<UserResponseDTO> searchByEmail(@RequestParam String email) {
+        UserResponseDTO user = userService.searchByEmail(email);
+        return ResponseEntity.ok(user);
+    }
+
+      /*   // DELETE USER
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<ResponseDto<String>> deleteUser(@PathVariable Long id) {
 
@@ -408,116 +454,8 @@ public class UserController {
         );
     }
     */
-
-//ADMIN
-    @GetMapping("/search")
-    public ResponseEntity<ResponseDto<List<UserResponseDTO>>> searchByName(
-            @RequestParam String name
-    ) {
-
-        List<UserResponseDTO> response = userService.searchByName(name);
-
-        if (response.isEmpty()) {
-            return ResponseEntity.ok(
-                    new ResponseDto<>(200, "No Users Found with given name", response)
-            );
-        }
-
-        return ResponseEntity.ok(
-                new ResponseDto<>(200, "Users Found Successfully", response)
-        );
-    }
-
-    //..........................................................................
-    // =========================
-    // SEND OTP
-    // =========================
-
-    //USER
-    @PostMapping("/send-otp")
-    public ResponseEntity<String> sendOtp(
-            @RequestParam String email) {
-
-        return ResponseEntity.ok(
-                userService.sendOtp(email)
-        );
-    }
-
-    // =========================
-    // VERIFY OTP
-    // =========================
-
-    //USER
-    @PostMapping("/verify-otp")
-    public ResponseEntity<String> verifyOtp(
-            @RequestBody VerifyOtpDTO dto) {
-
-        return ResponseEntity.ok(
-                userService.verifyOtp(dto)
-        );
-    }
-
-    // =========================
-    // RESET PASSWORD
-    // =========================
-
-    //USER
-    @PostMapping("/reset-password")
-    public ResponseEntity<String> resetPassword(
-            @RequestBody ResetPasswordDTO dto) {
-
-        return ResponseEntity.ok(
-                userService.resetPassword(dto)
-        );
-    }
-
-    //ADMIN
-    @PutMapping("/assign-bank/{userId}")
-    public ResponseEntity<ResponseDto> assignBank(
-
-            @PathVariable Long userId,
-
-            @RequestBody AssignBankRequestDTO dto
-    ) {
-
-        userService.assignBankAndSendMail(
-                userId,
-                dto.getBankId()
-        );
-
-        return ResponseEntity.ok(
-
-                new ResponseDto<>(
-
-                        200,
-
-                        "Bank Assigned Successfully And Mail Sent",
-
-                        null
-                )
-        );
-    }
-
-    //ADMIN
-    @PutMapping("/payment-success/{userId}")
-    public ResponseEntity<String> paymentSuccess(
-            @PathVariable Long userId) {
-
-        userService.paymentSuccess(userId);
-
-        return ResponseEntity.ok(
-                "Payment Successful"
-        );
-    }
-
-    //ADMIN/USER
-    @GetMapping("/search/email")
-    public ResponseEntity<UserResponseDTO> searchByEmail(
-            @RequestParam String email) {
-
-        UserResponseDTO user =
-                userService.searchByEmail(email);
-
-        return ResponseEntity.ok(user);
-    }
+      @GetMapping("/search-by-bank")
+      public ResponseEntity<List<UserResponseDTO>> searchUsersByBank(@RequestParam String bankName) {
+          return ResponseEntity.ok(userService.searchUsersByBank(bankName));
+      }
 }

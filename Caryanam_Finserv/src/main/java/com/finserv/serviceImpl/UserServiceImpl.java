@@ -584,6 +584,9 @@ public class UserServiceImpl implements UserService {
                 documentRepository
                         .findByUser_UserId(userId);
 
+        user.setBank(bank);
+        userRepository.save(user);
+
         emailService.sendCustomerDetailsToBank(
 
                 bank,
@@ -615,4 +618,31 @@ public class UserServiceImpl implements UserService {
 
         return mapToDTO(user);
     }
+
+    @Override
+    public List<UserResponseDTO> searchUsersByBank(String bankName) {
+
+        List<User> users =
+                userRepository.searchByBank(bankName);
+
+        return users.stream().map(user -> {
+
+            UserResponseDTO dto = new UserResponseDTO();
+
+            dto.setUserId(user.getUserId());
+            dto.setFullName(user.getFullName());
+            dto.setEmail(user.getEmail());
+
+            if (user.getPersonalInfo() != null) {
+                dto.setMobileNumber(
+                        user.getPersonalInfo()
+                                .getMobileNumber()
+                );
+            }
+
+            return dto;
+
+        }).toList();
+    }
+
 }

@@ -63,4 +63,8 @@ public class User {
     private Boolean isOtpVerified = false;
 
     private LocalDateTime otpGeneratedTime;
+
+    @ManyToOne
+    @JoinColumn(name = "bank_id")
+    private Bank bank;
 }

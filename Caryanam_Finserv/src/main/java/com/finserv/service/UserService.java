@@ -44,4 +44,6 @@ public interface UserService {
     );
     //.......................
     void paymentSuccess(Long userId);
+
+    List<UserResponseDTO> searchUsersByBank(String bankName);
 }
