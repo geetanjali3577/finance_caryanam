@@ -35,10 +35,7 @@ public interface UserService {
 
     String resetPassword(ResetPasswordDTO dto);
 
-    void assignBankAndSendMail(
-            Long userId,
-            Long bankId
-    );
+    void assignBankAndSendMail(Long userId, Long bankId);
     //.......................
     void paymentSuccess(Long userId);
 
@@ -47,4 +44,6 @@ public interface UserService {
     List<PaymentHistoryDTO> getPaymentHistory();
 
     PaymentHistoryDTO getPaymentDetails(Long userId);
+
+    DealerUsersResponseDTO getUsersByDealerCode(String dealerCode);
 }

@@ -696,4 +696,36 @@ public class UserServiceImpl implements UserService {
         return dto;
     }
 
+    @Override
+    public DealerUsersResponseDTO getUsersByDealerCode(
+            String dealerCode) {
+
+        List<User> users =
+                userRepository.findAllByDealerCode(dealerCode);
+
+        List<UserResponseDTO> userList =
+                users.stream().map(user -> {
+
+                    UserResponseDTO dto =
+                            new UserResponseDTO();
+
+                    dto.setUserId(user.getUserId());
+                    dto.setFullName(user.getFullName());
+                    dto.setEmail(user.getEmail());
+                    dto.setMobileNumber(user.getMobileNumber());
+                    dto.setDealerCode(user.getDealerCode());
+
+                    return dto;
+
+                }).toList();
+
+        DealerUsersResponseDTO response =
+                new DealerUsersResponseDTO();
+
+        response.setDealerCode(dealerCode);
+        response.setTotalUsers(users.size());
+        response.setUsers(userList);
+
+        return response;
+    }
 }

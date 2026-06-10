@@ -478,4 +478,14 @@ public class UserController {
                 userService.getPaymentDetails(userId)
         );
     }
+
+    @GetMapping("/dealer/{dealerCode}")
+    public ResponseEntity<DealerUsersResponseDTO>
+    getUsersByDealerCode(
+            @PathVariable String dealerCode) {
+
+        return ResponseEntity.ok(
+                userService.getUsersByDealerCode(dealerCode)
+        );
+    }
 }
