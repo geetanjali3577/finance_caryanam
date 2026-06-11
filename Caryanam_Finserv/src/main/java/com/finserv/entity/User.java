@@ -1,5 +1,6 @@
 package com.finserv.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.finserv.enums.RegistrationType;
 import com.finserv.enums.Role;
 import com.finserv.enums.UserStatus;
@@ -7,6 +8,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "UserReg")
@@ -70,5 +72,13 @@ public class User {
 
     private LocalDateTime getUpdatedAt;
 
+
+    @OneToMany(
+            mappedBy = "user",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    @JsonIgnore
+    private List<Document> documents;
 
 }

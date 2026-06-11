@@ -6,16 +6,11 @@ import java.util.List;
 
 public interface UserService {
 
-    //========================================
-    // REGISTER USER
-    //========================================
     UserResponseDTO registerUser(
             UserRegisterDTO dto
     );
 
-    //========================================
-    // GENERATE APPLICATION ID
-    //========================================
+
     String generateApplicationId();
 
     UserResponseDTO searchByEmail(String email);
@@ -27,7 +22,7 @@ public interface UserService {
 
     List<UserResponseDTO> searchByName(String name);
 
-   // void deleteUser(Long id);
+   void deleteUser(Long id);
 
     String sendOtp(String email);
 

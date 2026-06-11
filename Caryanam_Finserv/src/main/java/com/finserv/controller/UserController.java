@@ -438,7 +438,7 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
-      /*   // DELETE USER
+
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<ResponseDto<String>> deleteUser(@PathVariable Long id) {
 
@@ -453,7 +453,7 @@ public class UserController {
                 new ResponseDto<>(200, "User Deleted Successfully", "Deleted")
         );
     }
-    */
+
       @GetMapping("/search" +
               "-by-bank")
       public ResponseEntity<List<UserResponseDTO>> searchUsersByBank(@RequestParam String bankName) {

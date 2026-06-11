@@ -85,6 +85,7 @@ public class SecurityConfig {
                                         .permitAll()
                                         // User + Admin
                                         .requestMatchers(
+
                                                 "/api/user/**",
                                                 "/api/user/update/**",
                                                 "/api/user/search/email"
@@ -92,6 +93,7 @@ public class SecurityConfig {
 
                                         // Personal Info
                                 .requestMatchers(
+                                        "/api/users/delete/**" ,
                                         "/api/personal-info/save",
                                         "/api/personal-info/**",
                                         "/api/personal-info/update/**"

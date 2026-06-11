@@ -549,10 +549,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public void assignBankAndSendMail(
-
-            Long userId,
-            Long bankId
+    public void assignBankAndSendMail(Long userId, Long bankId
     ) {
 
         User user =
@@ -728,4 +725,16 @@ public class UserServiceImpl implements UserService {
 
         return response;
     }
+
+    @Override
+    public void deleteUser(Long id) {
+
+        User user = userRepository.findById(id)
+                .orElseThrow(() ->
+                        new RuntimeException("User Not Found With Id : " + id));
+
+        userRepository.delete(user);
+    }
+
+
 }
