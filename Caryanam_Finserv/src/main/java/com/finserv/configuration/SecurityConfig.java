@@ -93,7 +93,7 @@ public class SecurityConfig {
 
                                         // Personal Info
                                 .requestMatchers(
-                                        "/api/users/delete/**" ,
+
                                         "/api/personal-info/save",
                                         "/api/personal-info/**",
                                         "/api/personal-info/update/**"
@@ -133,6 +133,7 @@ public class SecurityConfig {
                                 ).hasAnyRole("DEALER","ADMIN")
 
                                 .requestMatchers(
+                                        "/api/users/delete/**" ,
                                         "/api/user/assign-bank/**",
                                         "/api/user/payment-success/**"
                                 ).hasRole("ADMIN")
