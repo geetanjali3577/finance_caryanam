@@ -81,4 +81,6 @@ public class User {
     @JsonIgnore
     private List<Document> documents;
 
+    private Double paymentAmount;
+
 }

@@ -13,6 +13,8 @@ public interface UserService {
 
     String generateApplicationId();
 
+
+
     UserResponseDTO searchByEmail(String email);
     UserResponseDTO getUserById(Long id);
 
@@ -32,7 +34,7 @@ public interface UserService {
 
     void assignBankAndSendMail(Long userId, Long bankId);
     //.......................
-    void paymentSuccess(Long userId);
+    void paymentSuccess(Long userId, Double amount);
 
     List<UserResponseDTO> searchUsersByBank(String bankName);
 

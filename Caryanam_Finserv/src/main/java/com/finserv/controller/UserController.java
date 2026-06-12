@@ -426,8 +426,11 @@ public class UserController {
 
     //ADMIN
     @PutMapping("/payment-success/{userId}")
-    public ResponseEntity<String> paymentSuccess(@PathVariable Long userId) {
-        userService.paymentSuccess(userId);
+    public ResponseEntity<String> paymentSuccess(
+            @PathVariable Long userId,
+            @RequestParam Double amount) {
+
+        userService.paymentSuccess(userId, amount);
         return ResponseEntity.ok("Payment Successful");
     }
 

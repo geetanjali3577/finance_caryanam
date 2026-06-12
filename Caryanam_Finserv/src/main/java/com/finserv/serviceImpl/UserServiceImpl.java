@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -71,6 +70,8 @@ public class UserServiceImpl implements UserService {
                 nextNumber
         );
     }
+
+
 
 
     @Override
@@ -590,18 +591,18 @@ public class UserServiceImpl implements UserService {
         );
     }
 
-     @Override
-     public void paymentSuccess(Long userId) {
+    @Override
+    public void paymentSuccess(Long userId, Double amount) {
 
-         User user =
-                 userRepository.findById(userId)
-                         .orElseThrow(() ->
-                                 new RuntimeException("User Not Found"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User Not Found"));
 
-         user.setPaymentDone(true);
+        user.setPaymentDone(true);
+        user.setPaymentAmount(amount);
 
-         userRepository.save(user);
-     }
+        userRepository.save(user);
+    }
+
+
 
     @Override
     public UserResponseDTO searchByEmail(String email) {
@@ -670,23 +671,18 @@ public class UserServiceImpl implements UserService {
     @Override
     public PaymentHistoryDTO getPaymentDetails(Long userId) {
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() ->
-                        new RuntimeException("User not found"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
 
         PaymentHistoryDTO dto = new PaymentHistoryDTO();
-
         dto.setUserId(user.getUserId());
         dto.setApplicationId(user.getApplicationId());
         dto.setFullName(user.getFullName());
         dto.setEmail(user.getEmail());
         dto.setMobileNumber(user.getMobileNumber());
-
+        dto.setPaymentAmount(user.getPaymentAmount());
         dto.setPaymentStatus(
                 Boolean.TRUE.equals(user.getPaymentDone())
-                        ? "APPROVED"
-                        : "PENDING"
-        );
+                        ? "APPROVED" : "PENDING");
 
         dto.setPaymentDate(user.getCreatedAt());
 

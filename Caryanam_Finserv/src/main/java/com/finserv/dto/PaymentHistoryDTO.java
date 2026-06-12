@@ -14,5 +14,6 @@ public class PaymentHistoryDTO  {
     private String email;
     private String mobileNumber;
     private String paymentStatus;
+    private Double paymentAmount;
     private LocalDateTime paymentDate;
 }
