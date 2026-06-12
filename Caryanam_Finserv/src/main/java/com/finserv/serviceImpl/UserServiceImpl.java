@@ -419,8 +419,8 @@ public class UserServiceImpl implements UserService {
                         "please ignore this email or contact our support team immediately.\n\n" +
 
                         "Regards,\n" +
-                        "Caryanam Finserv Team\n" +
-                        "support.caryanam@gmail.com";
+                        "Vahanfinserv Team\n" +
+                        "support@Vahanfinserv.com";
 
         emailService.sendMail(
                 user.getEmail(),
@@ -536,8 +536,8 @@ public class UserServiceImpl implements UserService {
                         "For your security, never share your password or OTP with anyone.\n\n" +
 
                         "Regards,\n" +
-                        "Caryanam Finserv Team\n" +
-                        "support.caryanam@gmail.com";
+                        "Vahanfinserv Team\n" +
+                        "support@Vahanfinserv.com";
 
         emailService.sendMail(
                 user.getEmail(),

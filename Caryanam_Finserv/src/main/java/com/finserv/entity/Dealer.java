@@ -63,4 +63,6 @@ public class Dealer {
     private LocalDateTime otpGeneratedTime;
 
     private Boolean isOtpVerified = false;
+
+
 }
