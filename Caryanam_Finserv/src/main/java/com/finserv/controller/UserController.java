@@ -421,7 +421,7 @@ public class UserController {
     @PutMapping("/assign-bank/{userId}")
     public ResponseEntity<ResponseDto> assignBank(@PathVariable Long userId, @RequestBody AssignBankRequestDTO dto) {
         userService.assignBankAndSendMail(userId, dto.getBankId());
-        return ResponseEntity.ok(new ResponseDto<>(200, "Bank Assigned Successfully And Mail Sent", null));
+        return ResponseEntity.ok(new ResponseDto<>(200, "Bank Assigned Successfully. Email and WhatsApp Sent", null));
     }
 
     //ADMIN
@@ -457,8 +457,7 @@ public class UserController {
         );
     }
 
-      @GetMapping("/search" +
-              "-by-bank")
+      @GetMapping("/search" + "-by-bank")
       public ResponseEntity<List<UserResponseDTO>> searchUsersByBank(@RequestParam String bankName) {
           return ResponseEntity.ok(userService.searchUsersByBank(bankName));
       }

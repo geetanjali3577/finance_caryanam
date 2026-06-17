@@ -20,13 +20,13 @@ public class SwaggerConfig {
         return new OpenAPI()
                 .info(
                         new Info()
-                                .title("Finance-Caryanam")
+                                .title("Vanhanfinance")
                                 .version("1.0")
-                                .description("Finance-Caryanam")
+                                .description("Vanhanfinance")
                                 .contact(
                                         new Contact()
-                                                .name("Swapnil")
-                                                .email("swapnil@example.com")
+                                                .name("caryanamindia")
+                                                .email("caryanamindia@example.com")
                                 )
                 )
                 .addSecurityItem(

@@ -12,6 +12,7 @@ import com.finserv.enums.UserStatus;
 import com.finserv.repository.*;
 import com.finserv.service.UserService;
 
+import com.finserv.whatapp.WhatsAppService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -31,7 +32,8 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private DealerRepository dealerRepository;
-
+    @Autowired
+    private WhatsAppService whatsAppService;
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -549,47 +551,73 @@ public class UserServiceImpl implements UserService {
     }
 
 
-    @Override
-    public void assignBankAndSendMail(Long userId, Long bankId
-    ) {
+//
+@Override
+public void assignBankAndSendMail(Long userId, Long bankId) {
 
-        User user =
-                userRepository.findById(userId)
-                        .orElseThrow(() ->
-                                new RuntimeException(
-                                        "User Not Found"
-                                ));
+    User user =
+            userRepository.findById(userId)
+                    .orElseThrow(() ->
+                            new RuntimeException("User Not Found"));
 
-        Bank bank =
-                bankRepository.findById(bankId)
-                        .orElseThrow(() ->
-                                new RuntimeException(
-                                        "Bank Not Found"
-                                ));
+    Bank bank =
+            bankRepository.findById(bankId)
+                    .orElseThrow(() ->
+                            new RuntimeException("Bank Not Found"));
 
-        PersonalInfo personalInfo =
-                personalInfoRepository
-                        .findByUser_UserId(userId)
-                        .orElseThrow(() ->
-                                new RuntimeException(
-                                        "Personal Info Not Found"
-                                ));
+    PersonalInfo personalInfo =
+            personalInfoRepository
+                    .findByUser_UserId(userId)
+                    .orElseThrow(() ->
+                            new RuntimeException("Personal Info Not Found"));
 
-        List<Document> documents =
-                documentRepository
-                        .findByUser_UserId(userId);
+    List<Document> documents =
+            documentRepository.findByUser_UserId(userId);
 
-        user.setBank(bank);
-        userRepository.save(user);
+    user.setBank(bank);
+    userRepository.save(user);
+
+    // Email
+    try {
+
+        System.out.println("EMAIL SENDING...");
 
         emailService.sendCustomerDetailsToBank(
-
                 bank,
                 user,
                 personalInfo,
                 documents
         );
+
+        System.out.println("EMAIL SENT SUCCESSFULLY");
+
+    } catch (Exception e) {
+
+        System.out.println("EMAIL FAILED");
+        e.printStackTrace();
     }
+
+    // WhatsApp
+    try {
+
+        System.out.println("WHATSAPP SENDING...");
+        System.out.println("BANK NUMBER = " + bank.getContactNumber());
+
+        whatsAppService.sendCustomerDetailsToBank(
+                bank,
+                user,
+                personalInfo,
+                documents
+        );
+
+        System.out.println("WHATSAPP SENT SUCCESSFULLY");
+
+    } catch (Exception e) {
+
+        System.out.println("WHATSAPP FAILED");
+        e.printStackTrace();
+    }
+}
 
     @Override
     public void paymentSuccess(Long userId, Double amount) {

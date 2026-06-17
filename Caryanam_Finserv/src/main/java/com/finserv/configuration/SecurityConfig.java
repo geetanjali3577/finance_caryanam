@@ -117,7 +117,8 @@ public class SecurityConfig {
                                         // Notifications
                                         .requestMatchers("/api/notifications/**")
                                         .hasAnyRole("USER", "DEALER", "ADMIN")
-
+                                        .requestMatchers("/api/v1/whatsapp/**")
+                                .hasRole("ADMIN")
                                         // Dealer
                                         .requestMatchers("/api/dealer/**","/api/dealer/all",
                                                  "/api/dealer/search/dealer-code")

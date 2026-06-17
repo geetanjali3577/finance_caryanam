@@ -1,4 +1,4 @@
-package com.finserv.emailservice;
+package com.finserv.whatapp;
 
 import com.finserv.entity.Bank;
 import com.finserv.entity.Document;
@@ -7,11 +7,7 @@ import com.finserv.entity.User;
 
 import java.util.List;
 
-public interface EmailService {
-
-
-    void sendMail(String to, String subject, String body);
-
+public interface WhatsAppService {
 
     void sendCustomerDetailsToBank(
             Bank bank,
@@ -19,5 +15,4 @@ public interface EmailService {
             PersonalInfo personalInfo,
             List<Document> documents
     );
-
 }
