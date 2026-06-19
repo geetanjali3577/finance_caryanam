@@ -29,17 +29,11 @@ public class WhatsAppServiceImpl implements WhatsAppService {
     private final RestTemplate restTemplate;
 
     @Override
-    public void sendCustomerDetailsToBank(
-            Bank bank,
-            User user,
-            PersonalInfo personalInfo,
-            List<Document> documents)  {
+    public void sendCustomerDetailsToBank(Bank bank, User user, PersonalInfo personalInfo, List<Document> documents)  {
 
         try {
-
             String message =
                     "🏦 NEW LOAN APPLICATION\n\n" +
-
                             "👤 CUSTOMER DETAILS\n" +
                             "Name : " + user.getFullName() + "\n" +
                             "Email : " + user.getEmail() + "\n" +
@@ -122,10 +116,10 @@ private void sendTemplateMessage(
     payload.put("type", "template");
 
     Map<String, Object> template = new HashMap<>();
-    template.put("name", "loan_application_notification");
+    template.put("name", "loan_notification");
 
     Map<String, Object> language = new HashMap<>();
-    language.put("code", "en_US");
+    language.put("code", "en");
     template.put("language", language);
 
     List<Map<String, Object>> parameters = List.of(
