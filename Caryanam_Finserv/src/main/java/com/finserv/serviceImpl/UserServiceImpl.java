@@ -13,7 +13,12 @@ import com.finserv.repository.*;
 import com.finserv.service.UserService;
 
 import com.finserv.whatapp.WhatsAppService;
+import com.razorpay.Order;
+import com.razorpay.RazorpayClient;
+import lombok.RequiredArgsConstructor;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +27,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
     @Autowired
@@ -36,6 +42,12 @@ public class UserServiceImpl implements UserService {
     private WhatsAppService whatsAppService;
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Value("${razorpay.key.id}")
+    private String keyId;
+
+    @Value("${razorpay.key.secret}")
+    private String keySecret;
 
     @Autowired
     private BankRepository bankRepository;
@@ -329,8 +341,6 @@ public class UserServiceImpl implements UserService {
                 .map(this::mapToDTO)
                 .toList();
     }
-
-
     private UserResponseDTO mapToDTO(User user) {
 
         UserResponseDTO dto = new UserResponseDTO();
@@ -369,10 +379,6 @@ public class UserServiceImpl implements UserService {
 
         return dto;
     }
-
-
-
-
     @Override
     public String sendOtp(String email) {
 
@@ -432,9 +438,6 @@ public class UserServiceImpl implements UserService {
 
         return "OTP sent successfully";
     }
-
-
-
     @Override
     public String verifyOtp(VerifyOtpDTO dto) {
 
@@ -472,8 +475,6 @@ public class UserServiceImpl implements UserService {
 
         return "OTP verified successfully";
     }
-
-
     @Override
     public String resetPassword(ResetPasswordDTO dto) {
 
@@ -549,11 +550,8 @@ public class UserServiceImpl implements UserService {
 
         return "Password reset successfully";
     }
-
-
-//
-@Override
-public void assignBankAndSendMail(Long userId, Long bankId) {
+    @Override
+    public void assignBankAndSendMail(Long userId, Long bankId) {
 
     User user =
             userRepository.findById(userId)
@@ -618,19 +616,68 @@ public void assignBankAndSendMail(Long userId, Long bankId) {
         e.printStackTrace();
     }
 }
+//.................payment
+     @Override
+   public RazorpayOrderResponse createOrder(Long userId) {
 
+    try {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() ->
+                        new RuntimeException("User Not Found"));
+
+        RazorpayClient razorpay =
+                new RazorpayClient(keyId, keySecret);
+
+        JSONObject options = new JSONObject();
+
+        options.put("amount", 11682); // 116.82 * 100
+        options.put("currency", "INR");
+        options.put("receipt", "user_" + userId);
+
+        Order order = razorpay.orders.create(options);
+
+        user.setRazorpayOrderId(order.get("id"));
+
+        userRepository.save(user);
+
+        RazorpayOrderResponse response =
+                new RazorpayOrderResponse();
+
+        response.setOrderId(order.get("id"));
+        response.setCurrency(order.get("currency"));
+        response.setAmount(order.get("amount"));
+
+        return response;
+
+    } catch (Exception e) {
+
+        throw new RuntimeException(
+                "Order Creation Failed : "
+                        + e.getMessage());
+    }
+}
     @Override
-    public void paymentSuccess(Long userId, Double amount) {
+    public void paymentSuccess(Long userId, String orderId, String paymentId) {
 
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User Not Found"));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() ->
+                        new RuntimeException("User Not Found"));
 
         user.setPaymentDone(true);
-        user.setPaymentAmount(amount);
+        user.setPaymentAmount(116.82);
+
+        user.setRazorpayOrderId(orderId);
+        user.setRazorpayPaymentId(paymentId);
+
+        user.setPaymentStatus("SUCCESS");
+
+        user.setStatus(UserStatus.PENDING);
+
+        user.setPaymentDate(LocalDateTime.now());
 
         userRepository.save(user);
     }
-
-
 
     @Override
     public UserResponseDTO searchByEmail(String email) {
@@ -718,8 +765,7 @@ public void assignBankAndSendMail(Long userId, Long bankId) {
     }
 
     @Override
-    public DealerUsersResponseDTO getUsersByDealerCode(
-            String dealerCode) {
+    public DealerUsersResponseDTO getUsersByDealerCode(String dealerCode) {
 
         List<User> users =
                 userRepository.findAllByDealerCode(dealerCode);
@@ -752,13 +798,7 @@ public void assignBankAndSendMail(Long userId, Long bankId) {
 
     @Override
     public void deleteUser(Long id) {
-
-        User user = userRepository.findById(id)
-                .orElseThrow(() ->
-                        new RuntimeException("User Not Found With Id : " + id));
-
-        userRepository.delete(user);
+        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User Not Found With Id : " + id));userRepository.delete(user);
     }
-
 
 }

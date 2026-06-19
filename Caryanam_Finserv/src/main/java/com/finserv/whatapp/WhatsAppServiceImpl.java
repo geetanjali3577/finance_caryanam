@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
@@ -70,88 +71,125 @@ public class WhatsAppServiceImpl implements WhatsAppService {
             }
 
             message += "\nRegards,\nFinserv Team";
-            sendTextMessage(bank.getContactNumber(), message);
+            sendTemplateMessage(
+                    bank.getContactNumber(),
+                    user,
+                    personalInfo,
+                    documents
+            );
             System.out.println("========== WHATSAPP MESSAGE ==========");
             System.out.println(message);
             System.out.println("======================================");
-           // sendTextMessage(bank.getContactNumber(), message);
 
-        } catch (Exception e) {
-            throw new RuntimeException("WhatsApp Send Failed", e);
         }
-
-    }
-
-    private void sendTextMessage(String mobileNumber, String message) {
-
-
-        String url =
-                "https://graph.facebook.com/v25.0/"
-                        + phoneNumberId
-                        + "/messages";
-
-        HttpHeaders headers = new HttpHeaders();
-
-        headers.setBearerAuth(accessToken);
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        Map<String, Object> text = new HashMap<>();
-        text.put("body", message);
-
-        Map<String, Object> payload = new HashMap<>();
-
-        payload.put("messaging_product", "whatsapp");
-
-        String formattedNumber = mobileNumber
-                .replace("+", "")
-                .replace(" ", "");
-
-        if (!formattedNumber.startsWith("91")) {
-            formattedNumber = "91" + formattedNumber;
-        }
-
-        System.out.println("Sending WhatsApp To : " + formattedNumber);
-
-        payload.put("to", formattedNumber);
-
-        payload.put("type", "text");
-        payload.put("text", text);
-
-        HttpEntity<Map<String, Object>> request =
-                new HttpEntity<>(payload, headers);
-
-        try {
-
-            ResponseEntity<String> response =
-                    restTemplate.postForEntity(
-                            url,
-                            request,
-                            String.class
-                    );
-
-            System.out.println(
-                    "WhatsApp Status : "
-                            + response.getStatusCode()
-            );
-
-            System.out.println(
-                    "WhatsApp Response : "
-                            + response.getBody()
-            );
-
-        } catch (Exception e) {
-
-            System.out.println("===== WHATSAPP ERROR =====");
-            e.printStackTrace();
-
-            throw new RuntimeException(
-                    "WhatsApp Send Failed",
-                    e
-            );
-        }
-
+        catch (HttpClientErrorException e) {
+                System.out.println("Status Code : " + e.getStatusCode());
+                System.out.println("Response : " + e.getResponseBodyAsString());
+                throw e;
+            }
 
     }
 
 
+private void sendTemplateMessage(
+
+        String mobileNumber,
+        User user,
+        PersonalInfo personalInfo,
+        List<Document> documents)
+{
+
+    String url = "https://graph.facebook.com/v25.0/"
+            + phoneNumberId + "/messages";
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setBearerAuth(accessToken);
+    headers.setContentType(MediaType.APPLICATION_JSON);
+
+    String formattedNumber = mobileNumber
+            .replace("+", "")
+            .replace(" ", "");
+
+    if (!formattedNumber.startsWith("91")) {
+        formattedNumber = "91" + formattedNumber;
+    }
+
+    Document doc = documents.get(0);
+
+    Map<String, Object> payload = new HashMap<>();
+    payload.put("messaging_product", "whatsapp");
+    payload.put("to", formattedNumber);
+    payload.put("type", "template");
+
+    Map<String, Object> template = new HashMap<>();
+    template.put("name", "loan_application_notification");
+
+    Map<String, Object> language = new HashMap<>();
+    language.put("code", "en_US");
+    template.put("language", language);
+
+    List<Map<String, Object>> parameters = List.of(
+            Map.of("type", "text", "text", user.getFullName()),
+            Map.of("type", "text", "text", user.getEmail()),
+            Map.of("type", "text", "text", user.getMobileNumber()),
+            Map.of("type", "text", "text", personalInfo.getAddress()),
+            Map.of("type", "text", "text", personalInfo.getCity()),
+            Map.of("type", "text", "text", personalInfo.getState()),
+            Map.of("type", "text", "text", personalInfo.getPincode()),
+            Map.of("type", "text", "text",
+                    String.valueOf(personalInfo.getLoanAmount())),
+            Map.of("type", "text", "text", doc.getFileName()),
+            Map.of(
+                    "type",
+                    "text",
+                    "text",
+                    "https://vahanfinserv.com/api/documents/download/"
+                            + doc.getDocumentId()
+            )
+    );
+
+    Map<String, Object> bodyComponent = new HashMap<>();
+    bodyComponent.put("type", "body");
+    bodyComponent.put("parameters", parameters);
+
+    template.put(
+            "components",
+            List.of(bodyComponent)
+    );
+
+    payload.put("template", template);
+
+    HttpEntity<Map<String, Object>> request =
+            new HttpEntity<>(payload, headers);
+
+    try {
+
+        ResponseEntity<String> response =
+                restTemplate.postForEntity(
+                        url,
+                        request,
+                        String.class
+                );
+
+        System.out.println("WhatsApp Status : "
+                + response.getStatusCode());
+
+        System.out.println("WhatsApp Response : "
+                + response.getBody());
+
+    } catch (HttpClientErrorException e) {
+
+        System.out.println("===== WHATSAPP ERROR =====");
+        System.out.println("Status Code : "
+                + e.getStatusCode());
+
+        System.out.println("Response : "
+                + e.getResponseBodyAsString());
+
+        throw e;
+    }
 }
+}
+
+
+

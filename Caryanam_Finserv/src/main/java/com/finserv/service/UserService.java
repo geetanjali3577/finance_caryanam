@@ -1,6 +1,7 @@
 package com.finserv.service;
 
 import com.finserv.dto.*;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.List;
 
@@ -33,8 +34,11 @@ public interface UserService {
     String resetPassword(ResetPasswordDTO dto);
 
     void assignBankAndSendMail(Long userId, Long bankId);
-    //.......................
-    void paymentSuccess(Long userId, Double amount);
+    //.......................payment
+    RazorpayOrderResponse createOrder(Long userId);
+    void paymentSuccess(Long userId,
+                        String orderId,
+                        String paymentId);
 
     List<UserResponseDTO> searchUsersByBank(String bankName);
 

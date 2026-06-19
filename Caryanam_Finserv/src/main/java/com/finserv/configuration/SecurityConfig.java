@@ -44,8 +44,9 @@ public class SecurityConfig {
 
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
+                                .requestMatchers("/favicon.ico","/webhook","/api/payment/**").permitAll()
 
-                                        .requestMatchers(
+                                .requestMatchers(
                                                 "/api/auth/**",
                                                 "/api/user/register",
                                                 "/api/user/send-otp",

@@ -83,4 +83,12 @@ public class User {
 
     private Double paymentAmount;
 
+
+    private String razorpayOrderId;
+
+    private String razorpayPaymentId;
+
+    private String paymentStatus;
+
+    private LocalDateTime paymentDate;
 }

@@ -424,13 +424,21 @@ public class UserController {
         return ResponseEntity.ok(new ResponseDto<>(200, "Bank Assigned Successfully. Email and WhatsApp Sent", null));
     }
 
-    //ADMIN
+    //ADMIN payment
+    @PostMapping("/create-order/{userId}")
+    public ResponseEntity<RazorpayOrderResponse> createOrder(
+            @PathVariable Long userId) {
+
+        return ResponseEntity.ok(
+                userService.createOrder(userId));
+    }
     @PutMapping("/payment-success/{userId}")
     public ResponseEntity<String> paymentSuccess(
             @PathVariable Long userId,
-            @RequestParam Double amount) {
+            @PathVariable String orderId,
+            @PathVariable String paymentId) {
 
-        userService.paymentSuccess(userId, amount);
+        userService.paymentSuccess(userId,orderId,paymentId);
         return ResponseEntity.ok("Payment Successful");
     }
 
