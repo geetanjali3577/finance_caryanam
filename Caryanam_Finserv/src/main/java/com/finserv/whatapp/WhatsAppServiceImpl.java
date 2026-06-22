@@ -95,8 +95,13 @@ public class WhatsAppServiceImpl implements WhatsAppService {
 
         // ZIP Download URL
         String zipDownloadUrl =
-                "https://vahanfinserv.com/api/documents/download-all?token="
+                "https://vahanfinserv.com/api/documents/zip?token="
                         + user.getDocumentDownloadToken();
+//        String zipDownloadUrl =
+//
+
+//                "https://vahanfinserv.com/api/documents/zip?"
+//                        + user.getDocumentDownloadToken();
 
         Map<String, Object> payload = new HashMap<>();
         payload.put("messaging_product", "whatsapp");

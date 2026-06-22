@@ -599,9 +599,14 @@ public class UserServiceImpl implements UserService {
                 .toString()
                 .replace("-", "");
 
+        System.out.println("TOKEN GENERATED = " + token);
+
         user.setDocumentDownloadToken(token);
 
-        userRepository.save(user);
+        User savedUser = userRepository.save(user);
+
+        System.out.println("TOKEN AFTER SAVE = "
+                + savedUser.getDocumentDownloadToken());
     // WhatsApp
     try {
 

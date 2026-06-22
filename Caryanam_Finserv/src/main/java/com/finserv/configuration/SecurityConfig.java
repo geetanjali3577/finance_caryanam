@@ -62,7 +62,7 @@ public class SecurityConfig {
                                         ).permitAll()
                                 .requestMatchers(
                                         "/api/auth/**",
-                                        "/api/documents/download-all/**"
+                                        "/api/documents/download-all/**","/api/documents/zip/**"
                                           ).permitAll()
 
                                 .requestMatchers(HttpMethod.PUT, "/api/user/payment-success/**").permitAll()
