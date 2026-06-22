@@ -49,26 +49,33 @@ public class ZipController {
     public ResponseEntity<byte[]> downloadZip(
             @RequestParam String token)
             throws IOException {
-
+        System.out.println("TOKEN = " + token);
         User user = userRepository
                 .findByDocumentDownloadToken(token)
                 .orElseThrow(() ->
                         new RuntimeException("Invalid Token"));
-
+        System.out.println("TOKEN = " + user.getDocumentDownloadToken());
         List<Document> documents =
                 documentRepository.findByUser_UserId(user.getUserId());
+        System.out.println("DOC COUNT = " + documents.size());
 
         byte[] zipData =
                 zipService.createZip(documents);
 
+//        return ResponseEntity.ok()
+//                .header(
+//                        HttpHeaders.CONTENT_DISPOSITION,
+//                        "attachment; filename=Loan_Documents.zip"
+//                )
+//                .contentType(
+//                        MediaType.APPLICATION_OCTET_STREAM
+//                )
+//                .body(zipData);
         return ResponseEntity.ok()
-                .header(
-                        HttpHeaders.CONTENT_DISPOSITION,
-                        "attachment; filename=Loan_Documents.zip"
-                )
-                .contentType(
-                        MediaType.APPLICATION_OCTET_STREAM
-                )
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=documents.zip")
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .contentLength(zipData.length)
                 .body(zipData);
     }
 }
