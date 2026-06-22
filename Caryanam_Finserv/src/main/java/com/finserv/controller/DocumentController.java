@@ -291,10 +291,7 @@ public class DocumentController {
 //USER DEALER
     //  UPDATE DOCUMENT
     @PutMapping("/{documentId}")
-    public ResponseEntity<ResponseDto> updateDocument(
-
-            @PathVariable Long documentId,
-            @RequestParam("file") MultipartFile file
+    public ResponseEntity<ResponseDto> updateDocument(@PathVariable Long documentId, @RequestParam("file") MultipartFile file
     ) {
 
         Document document = documentService.updateDocument(documentId, file);
@@ -311,10 +308,7 @@ public class DocumentController {
     //ADMIN
     // ADD REMARKS USER TO ADMIN
     @PutMapping("/{documentId}/remarks")
-    public ResponseEntity<ResponseDto> addRemarks(
-
-            @PathVariable Long documentId,
-            @RequestBody RemarkRequestDTO dto
+    public ResponseEntity<ResponseDto> addRemarks(@PathVariable Long documentId, @RequestBody RemarkRequestDTO dto
     ) {
 
         Document document =
@@ -333,7 +327,6 @@ public class DocumentController {
     // GET PENDING DOCUMENTS TO ADMIN
     @GetMapping("/pending")
     public ResponseEntity<ResponseDto> getPendingDocuments() {
-
         List<Document> pendingDocs =
                 documentService.getPendingDocuments();
 
@@ -379,6 +372,14 @@ public class DocumentController {
                         counts
                 )
         );
+    }
+
+    @GetMapping("/download-all")
+    public ResponseEntity<byte[]> downloadAllDocuments(
+            @RequestParam String token) {
+
+        return documentService
+                .downloadAllDocumentsByToken(token);
     }
 }
 

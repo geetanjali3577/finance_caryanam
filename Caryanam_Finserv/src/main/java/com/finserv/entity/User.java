@@ -91,4 +91,6 @@ public class User {
     private String paymentStatus;
 
     private LocalDateTime paymentDate;
+    @Column(length = 100)
+    private String documentDownloadToken;
 }

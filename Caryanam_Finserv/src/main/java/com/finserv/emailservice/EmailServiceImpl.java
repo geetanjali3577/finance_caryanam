@@ -17,30 +17,7 @@ public class EmailServiceImpl implements EmailService {
     @Autowired
     private JavaMailSender mailSender;
 
-//    @Override
-//    public void sendMail(String to, String subject, String body) {
-//        SimpleMailMessage message = new SimpleMailMessage();
-//
-//        message.setTo(to);
-//        message.setSubject(subject);
-//        message.setText(body);
-//
-//        mailSender.send(message);
-//    }
 
-//    @Override
-//    public void sendMail(String to, String subject, String body) {
-//
-//        SimpleMailMessage message = new SimpleMailMessage();
-//
-//        message.setFrom("support@vahanfinserv.com"); // Add this
-//
-//        message.setTo(to);
-//        message.setSubject(subject);
-//        message.setText(body);
-//
-//        mailSender.send(message);
-//    }
 
     @Override
     public void sendMail(String to, String subject, String body) {

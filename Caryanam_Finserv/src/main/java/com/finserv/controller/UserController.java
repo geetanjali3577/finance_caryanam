@@ -432,7 +432,7 @@ public class UserController {
         return ResponseEntity.ok(
                 userService.createOrder(userId));
     }
-    @PutMapping("/payment-success/{userId}")
+    @PutMapping("/payment-success/{userId}/{orderId}/{paymentId}")
     public ResponseEntity<String> paymentSuccess(
             @PathVariable Long userId,
             @PathVariable String orderId,

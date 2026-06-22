@@ -29,160 +29,141 @@ public class WhatsAppServiceImpl implements WhatsAppService {
     private final RestTemplate restTemplate;
 
     @Override
-    public void sendCustomerDetailsToBank(Bank bank, User user, PersonalInfo personalInfo, List<Document> documents)  {
+    public void sendCustomerDetailsToBank(
+            Bank bank,
+            User user,
+            PersonalInfo personalInfo,
+            List<Document> documents) {
 
         try {
-            String message =
-                    "🏦 NEW LOAN APPLICATION\n\n" +
-                            "👤 CUSTOMER DETAILS\n" +
-                            "Name : " + user.getFullName() + "\n" +
-                            "Email : " + user.getEmail() + "\n" +
-                            "Mobile : " + user.getMobileNumber() + "\n\n" +
 
-                            "📍 ADDRESS DETAILS\n" +
-                            "Address : " + personalInfo.getAddress() + "\n" +
-                            "City : " + personalInfo.getCity() + "\n" +
-                            "State : " + personalInfo.getState() + "\n" +
-                            "Pincode : " + personalInfo.getPincode() + "\n\n" +
-
-                            "💰 LOAN DETAILS\n" +
-                            "Loan Amount : ₹" + personalInfo.getLoanAmount() + "\n\n" +
-
-                            "📄 DOCUMENTS\n";
-
-            for (Document doc : documents) {
-
-                message += "• "
-                        + doc.getDocumentType()
-                        + " : "
-                        + doc.getFileName()
-                        + "\n";
-
-                message += "Download Link : "
-                        + "https://vahanfinserv.com/api/documents/download/"
-                        + doc.getDocumentId()
-                        + "\n\n";
-            }
-
-            message += "\nRegards,\nFinserv Team";
             sendTemplateMessage(
                     bank.getContactNumber(),
                     user,
                     personalInfo,
                     documents
             );
-            System.out.println("========== WHATSAPP MESSAGE ==========");
-            System.out.println(message);
+
+            System.out.println("======================================");
+            System.out.println("WhatsApp Message Sent Successfully");
+            System.out.println("Bank Mobile : " + bank.getContactNumber());
+            System.out.println("Customer : " + user.getFullName());
             System.out.println("======================================");
 
+        } catch (HttpClientErrorException e) {
+
+            System.out.println("===== WHATSAPP ERROR =====");
+            System.out.println("Status Code : " + e.getStatusCode());
+            System.out.println("Response : " + e.getResponseBodyAsString());
+
+            throw e;
+
+        } catch (Exception e) {
+
+            System.out.println("===== WHATSAPP ERROR =====");
+            e.printStackTrace();
+
+            throw new RuntimeException(
+                    "Failed to send WhatsApp message",
+                    e
+            );
         }
-        catch (HttpClientErrorException e) {
-                System.out.println("Status Code : " + e.getStatusCode());
-                System.out.println("Response : " + e.getResponseBodyAsString());
-                throw e;
-            }
-
     }
 
 
-private void sendTemplateMessage(
+    private void sendTemplateMessage(
+            String mobileNumber,
+            User user,
+            PersonalInfo personalInfo,
+            List<Document> documents) {
 
-        String mobileNumber,
-        User user,
-        PersonalInfo personalInfo,
-        List<Document> documents)
-{
+        String url = "https://graph.facebook.com/v25.0/"
+                + phoneNumberId
+                + "/messages";
 
-    String url = "https://graph.facebook.com/v25.0/"
-            + phoneNumberId + "/messages";
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(accessToken);
+        headers.setContentType(MediaType.APPLICATION_JSON);
 
-    HttpHeaders headers = new HttpHeaders();
-    headers.setBearerAuth(accessToken);
-    headers.setContentType(MediaType.APPLICATION_JSON);
+        String formattedNumber = mobileNumber
+                .replace("+", "")
+                .replace(" ", "");
 
-    String formattedNumber = mobileNumber
-            .replace("+", "")
-            .replace(" ", "");
+        if (!formattedNumber.startsWith("91")) {
+            formattedNumber = "91" + formattedNumber;
+        }
 
-    if (!formattedNumber.startsWith("91")) {
-        formattedNumber = "91" + formattedNumber;
+        // ZIP Download URL
+        String zipDownloadUrl =
+                "https://vahanfinserv.com/api/documents/download-all?token="
+                        + user.getDocumentDownloadToken();
+
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("messaging_product", "whatsapp");
+        payload.put("to", formattedNumber);
+        payload.put("type", "template");
+
+        Map<String, Object> template = new HashMap<>();
+        template.put("name", "loan_application");
+
+        Map<String, Object> language = new HashMap<>();
+        language.put("code", "en");
+        template.put("language", language);
+
+        List<Map<String, Object>> parameters = List.of(
+                Map.of("type", "text", "text", user.getFullName()),
+                Map.of("type", "text", "text", user.getEmail()),
+                Map.of("type", "text", "text", user.getMobileNumber()),
+                Map.of("type", "text", "text", personalInfo.getAddress()),
+                Map.of("type", "text", "text", personalInfo.getCity()),
+                Map.of("type", "text", "text", personalInfo.getState()),
+                Map.of("type", "text", "text", personalInfo.getPincode()),
+                Map.of("type", "text", "text",
+                        String.valueOf(personalInfo.getLoanAmount())),
+                Map.of("type", "text", "text", zipDownloadUrl)
+        );
+
+        Map<String, Object> bodyComponent = new HashMap<>();
+        bodyComponent.put("type", "body");
+        bodyComponent.put("parameters", parameters);
+
+        template.put("components", List.of(bodyComponent));
+
+        payload.put("template", template);
+
+        HttpEntity<Map<String, Object>> request =
+                new HttpEntity<>(payload, headers);
+
+        try {
+
+            System.out.println("===== WHATSAPP REQUEST =====");
+            System.out.println(payload);
+
+            ResponseEntity<String> response =
+                    restTemplate.postForEntity(
+                            url,
+                            request,
+                            String.class
+                    );
+
+            System.out.println("WhatsApp Status : "
+                    + response.getStatusCode());
+
+            System.out.println("WhatsApp Response : "
+                    + response.getBody());
+
+        } catch (HttpClientErrorException e) {
+
+            System.out.println("===== WHATSAPP ERROR =====");
+            System.out.println("Status Code : "
+                    + e.getStatusCode());
+
+            System.out.println("Response : "
+                    + e.getResponseBodyAsString());
+
+            throw e;
+        }
     }
-
-    Document doc = documents.get(0);
-
-    Map<String, Object> payload = new HashMap<>();
-    payload.put("messaging_product", "whatsapp");
-    payload.put("to", formattedNumber);
-    payload.put("type", "template");
-
-    Map<String, Object> template = new HashMap<>();
-    template.put("name", "loan_notification");
-
-    Map<String, Object> language = new HashMap<>();
-    language.put("code", "en");
-    template.put("language", language);
-
-    List<Map<String, Object>> parameters = List.of(
-            Map.of("type", "text", "text", user.getFullName()),
-            Map.of("type", "text", "text", user.getEmail()),
-            Map.of("type", "text", "text", user.getMobileNumber()),
-            Map.of("type", "text", "text", personalInfo.getAddress()),
-            Map.of("type", "text", "text", personalInfo.getCity()),
-            Map.of("type", "text", "text", personalInfo.getState()),
-            Map.of("type", "text", "text", personalInfo.getPincode()),
-            Map.of("type", "text", "text",
-                    String.valueOf(personalInfo.getLoanAmount())),
-            Map.of("type", "text", "text", doc.getFileName()),
-            Map.of(
-                    "type",
-                    "text",
-                    "text",
-                    "https://vahanfinserv.com/api/documents/download/"
-                            + doc.getDocumentId()
-            )
-    );
-
-    Map<String, Object> bodyComponent = new HashMap<>();
-    bodyComponent.put("type", "body");
-    bodyComponent.put("parameters", parameters);
-
-    template.put(
-            "components",
-            List.of(bodyComponent)
-    );
-
-    payload.put("template", template);
-
-    HttpEntity<Map<String, Object>> request =
-            new HttpEntity<>(payload, headers);
-
-    try {
-
-        ResponseEntity<String> response =
-                restTemplate.postForEntity(
-                        url,
-                        request,
-                        String.class
-                );
-
-        System.out.println("WhatsApp Status : "
-                + response.getStatusCode());
-
-        System.out.println("WhatsApp Response : "
-                + response.getBody());
-
-    } catch (HttpClientErrorException e) {
-
-        System.out.println("===== WHATSAPP ERROR =====");
-        System.out.println("Status Code : "
-                + e.getStatusCode());
-
-        System.out.println("Response : "
-                + e.getResponseBodyAsString());
-
-        throw e;
-    }
-}
 }
 
 

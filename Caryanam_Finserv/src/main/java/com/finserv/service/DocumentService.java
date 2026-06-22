@@ -6,6 +6,7 @@ import com.finserv.dto.RemarkRequestDTO;
 import com.finserv.entity.Document;
 import com.finserv.enums.DocumentStatus;
 import com.finserv.enums.DocumentType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -32,14 +33,9 @@ public interface DocumentService {
 
     DocumentCountDTO getDocumentCounts(Long userId);
 
-    Object uploadUnified(
+    Object uploadUnified(Long userId, MultipartFile file, String base64, DocumentType type);
 
-            Long userId,
 
-            MultipartFile file,
 
-            String base64,
-
-            DocumentType type
-    );
+    ResponseEntity<byte[]> downloadAllDocumentsByToken(String token);
 }

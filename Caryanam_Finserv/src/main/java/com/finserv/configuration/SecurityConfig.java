@@ -60,7 +60,12 @@ public class SecurityConfig {
                                                 "/swagger-ui.html",
                                                 "/v3/api-docs/**"
                                         ).permitAll()
+                                .requestMatchers(
+                                        "/api/auth/**",
+                                        "/api/documents/download-all/**"
+                                          ).permitAll()
 
+                                .requestMatchers(HttpMethod.PUT, "/api/user/payment-success/**").permitAll()
                                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
                                         // Admin APIs
@@ -136,8 +141,8 @@ public class SecurityConfig {
 
                                 .requestMatchers(
                                         "/api/users/delete/**" ,
-                                        "/api/user/assign-bank/**",
-                                        "/api/user/payment-success/**"
+                                        "/api/user/assign-bank/**"
+
                                 ).hasRole("ADMIN")
 
                                         .anyRequest().authenticated()

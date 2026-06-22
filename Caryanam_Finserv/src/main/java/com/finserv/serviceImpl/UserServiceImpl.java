@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -594,7 +595,13 @@ public class UserServiceImpl implements UserService {
         System.out.println("EMAIL FAILED");
         e.printStackTrace();
     }
+        String token = UUID.randomUUID()
+                .toString()
+                .replace("-", "");
 
+        user.setDocumentDownloadToken(token);
+
+        userRepository.save(user);
     // WhatsApp
     try {
 

@@ -51,4 +51,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findAllPaymentHistory();
 
     List<User> findAllByDealerCode(String dealerCode);
+
+    Optional<User> findByDocumentDownloadToken(String token);
 }
