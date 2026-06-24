@@ -10,6 +10,7 @@ import com.finserv.enums.RegistrationType;
 import com.finserv.enums.Role;
 import com.finserv.enums.UserStatus;
 import com.finserv.repository.*;
+import com.finserv.service.EmailVerificationService;
 import com.finserv.service.UserService;
 
 import com.finserv.whatapp.WhatsAppService;
@@ -43,6 +44,9 @@ public class UserServiceImpl implements UserService {
     private WhatsAppService whatsAppService;
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private EmailVerificationService emailVerificationService;
 
     @Value("${razorpay.key.id}")
     private String keyId;
@@ -91,6 +95,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponseDTO registerUser(UserRegisterDTO dto) {
+
+        if (!emailVerificationService
+                .isEmailVerified(dto.getEmail())) {
+
+            throw new RuntimeException(
+                    "Please verify email first");
+        }
 
         if (userRepository.existsByEmail(dto.getEmail())) {
             throw new RuntimeException("Email Already Exists");

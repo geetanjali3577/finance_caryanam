@@ -12,6 +12,7 @@ import com.finserv.repository.DealerRepository;
 import com.finserv.repository.UserRepository;
 import com.finserv.service.DealerService;
 
+import com.finserv.service.EmailVerificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -36,27 +37,49 @@ public class DealerServiceImpl implements DealerService {
     @Autowired
     private EmailService emailService;
 
+    @Autowired
+    private EmailVerificationService emailVerificationService;
+
 
     @Override
     public DealerResponseDTO registerDealer(DealerRegisterDTO dto) {
 
+        if(!emailVerificationService
+                .isEmailVerified(dto.getEmail())){
+
+            throw new RuntimeException(
+                    "Please verify email first");
+        }
+
         if (dealerRepository.existsByEmail(dto.getEmail())) {
             throw new RuntimeException("Email Already Exists");
         }
-        if (dealerRepository.existsByMobileNumber(dto.getMobileNumber())) {
-            throw new RuntimeException("Mobile Number Already Exists");
+
+        if (dealerRepository.existsByMobileNumber(
+                dto.getMobileNumber())) {
+
+            throw new RuntimeException(
+                    "Mobile Number Already Exists");
         }
 
         Dealer dealer = new Dealer();
+
         dealer.setFullName(dto.getFullName());
         dealer.setEmail(dto.getEmail());
         dealer.setMobileNumber(dto.getMobileNumber());
-        dealer.setPassword(passwordEncoder.encode(dto.getPassword()));
+
+        dealer.setPassword(
+                passwordEncoder.encode(dto.getPassword()));
+
         dealer.setRole(Role.DEALER);
+
         dealer.setStatus(DealerStatus.ACTIVE);
+
         dealer.setCreatedAt(LocalDateTime.now());
 
-        Dealer savedDealer = dealerRepository.save(dealer);
+        Dealer savedDealer =
+                dealerRepository.save(dealer);
+
         return DealerResponseDTO.builder()
                 .dealerId(savedDealer.getDealerId())
                 .dealerCode(savedDealer.getDealerCode())

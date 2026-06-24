@@ -20,4 +20,5 @@ public interface DealerService {
 
     DealerResponseDTO searchByDealerCode(String dealerCode);
 
+
 }

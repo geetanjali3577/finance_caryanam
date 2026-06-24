@@ -7,6 +7,7 @@ import com.finserv.repository.DealerRepository;
 import com.finserv.service.DealerService;
 
 
+import com.finserv.service.EmailVerificationService;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ public class DealerController {
 //ALL DEALER END POINTS
     private final DealerService dealerService;
     private final DealerRepository dealerRepository;
+    private final EmailVerificationService emailVerificationService;
 
     // ================= REGISTER DEALER =================
 
@@ -190,5 +192,24 @@ public class DealerController {
                 dealerService.searchByDealerCode(dealerCode);
 
         return ResponseEntity.ok(dealer);
+    }
+
+    @PostMapping("/register/send-otp")
+    public ResponseEntity<String> sendRegisterOtp(
+            @RequestParam String email){
+
+        return ResponseEntity.ok(
+                emailVerificationService.sendRegisterOtp(email)
+        );
+    }
+
+
+    @PostMapping("/register/verify-otp")
+    public ResponseEntity<String> verifyRegisterOtp(
+            @RequestBody VerifyOtpDTO dto){
+
+        return ResponseEntity.ok(
+                emailVerificationService.verifyRegisterOtp(dto)
+        );
     }
 }

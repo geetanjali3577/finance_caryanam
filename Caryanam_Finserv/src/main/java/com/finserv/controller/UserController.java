@@ -8,6 +8,7 @@ import com.finserv.enums.RegistrationType;
 import com.finserv.repository.DealerRepository;
 import com.finserv.repository.UserRepository;
 import com.finserv.service.UserService;
+import com.finserv.service.EmailVerificationService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -17,13 +18,14 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/user")
 @RequiredArgsConstructor
+@RequestMapping("/api/user")
 public class UserController {
 
     private final UserService userService;
     private final UserRepository userRepository;
     private final DealerRepository dealerRepository;
+    private final EmailVerificationService emailVerificationService;
 
     @PostMapping("/register")
     public ResponseEntity<ResponseDto<UserResponseDTO>> registerUser(@RequestBody UserRegisterDTO dto) {
@@ -496,6 +498,31 @@ public class UserController {
 
         return ResponseEntity.ok(
                 userService.getUsersByDealerCode(dealerCode)
+        );
+    }
+
+    @PostMapping("/register/send-otp")
+    public ResponseEntity<String> sendRegisterOtp(
+
+            @RequestParam String email) {
+
+        return ResponseEntity.ok(
+
+                emailVerificationService
+                        .sendRegisterOtp(email)
+        );
+    }
+
+
+    @PostMapping("/register/verify-otp")
+    public ResponseEntity<String> verifyRegisterOtp(
+
+            @RequestBody VerifyOtpDTO dto) {
+
+        return ResponseEntity.ok(
+
+                emailVerificationService
+                        .verifyRegisterOtp(dto)
         );
     }
 }
