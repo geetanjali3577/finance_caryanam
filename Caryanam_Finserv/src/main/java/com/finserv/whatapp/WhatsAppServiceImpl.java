@@ -95,7 +95,7 @@ public class WhatsAppServiceImpl implements WhatsAppService {
 
         // ZIP Download URL
         String zipDownloadUrl =
-                "https://vahanfinserv.com/api/documents/zip?token="
+                "https://v1.vahanfinserv.com/api/documents/zip?token="
                         + user.getDocumentDownloadToken();
 //        String zipDownloadUrl =
 //
