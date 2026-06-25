@@ -419,4 +419,14 @@ public String verifyOtp(VerifyOtpDTO dto) {
                 .build();
     }
 
+    @Override
+    public void deleteDealer(Long dealerId) {
+
+        Dealer dealer = dealerRepository.findById(dealerId)
+                .orElseThrow(() ->
+                        new RuntimeException("Dealer not found"));
+
+        dealerRepository.delete(dealer);
+    }
+
 }

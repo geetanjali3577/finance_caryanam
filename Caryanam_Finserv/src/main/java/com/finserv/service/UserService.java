@@ -47,4 +47,6 @@ public interface UserService {
     PaymentHistoryDTO getPaymentDetails(Long userId);
 
     DealerUsersResponseDTO getUsersByDealerCode(String dealerCode);
+
+    void deleteDealerUser(String dealerCode, Long userId);
 }

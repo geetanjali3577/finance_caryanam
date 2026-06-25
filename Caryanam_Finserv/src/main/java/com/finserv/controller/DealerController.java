@@ -8,6 +8,7 @@ import com.finserv.service.DealerService;
 
 
 import com.finserv.service.EmailVerificationService;
+import com.finserv.service.UserService;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,7 @@ public class DealerController {
     private final DealerService dealerService;
     private final DealerRepository dealerRepository;
     private final EmailVerificationService emailVerificationService;
+    private final UserService userService;
 
     // ================= REGISTER DEALER =================
 
@@ -211,5 +213,25 @@ public class DealerController {
         return ResponseEntity.ok(
                 emailVerificationService.verifyRegisterOtp(dto)
         );
+    }
+
+
+    @DeleteMapping("/{dealerCode}/user/{userId}")
+    public ResponseEntity<String> deleteDealerUser(
+            @PathVariable String dealerCode,
+            @PathVariable Long userId) {
+
+        userService.deleteDealerUser(dealerCode, userId);
+
+        return ResponseEntity.ok("User deleted successfully");
+    }
+
+    @DeleteMapping("delete/{dealerId}")
+    public ResponseEntity<String> deleteDealer(
+            @PathVariable Long dealerId) {
+
+        dealerService.deleteDealer(dealerId);
+
+        return ResponseEntity.ok("Dealer account deleted successfully");
     }
 }

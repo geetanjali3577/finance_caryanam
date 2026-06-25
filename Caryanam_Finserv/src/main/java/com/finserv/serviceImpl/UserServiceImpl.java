@@ -850,4 +850,20 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User Not Found With Id : " + id));userRepository.delete(user);
     }
 
+    @Override
+    public void deleteDealerUser(
+            String dealerCode,
+            Long userId) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() ->
+                        new RuntimeException("User not found"));
+
+        if (!dealerCode.equals(user.getDealerCode())) {
+            throw new RuntimeException(
+                    "You are not authorized to delete this user");
+        }
+
+        userRepository.delete(user);
+    }
 }

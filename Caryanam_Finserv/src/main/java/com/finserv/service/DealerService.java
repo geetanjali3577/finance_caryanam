@@ -20,5 +20,5 @@ public interface DealerService {
 
     DealerResponseDTO searchByDealerCode(String dealerCode);
 
-
+    void deleteDealer(Long dealerId);
 }
