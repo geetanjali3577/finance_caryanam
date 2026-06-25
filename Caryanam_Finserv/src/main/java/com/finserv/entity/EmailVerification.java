@@ -3,6 +3,8 @@ package com.finserv.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "email_verification")
 @Getter
@@ -22,4 +24,7 @@ public class EmailVerification {
     private String otp;
 
     private boolean verified = false;
+
+    // OTP Expiry Time
+    private LocalDateTime otpExpiryTime;
 }

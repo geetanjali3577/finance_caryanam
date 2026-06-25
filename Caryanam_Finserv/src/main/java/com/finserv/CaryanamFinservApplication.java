@@ -4,7 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class CaryanamFinservApplication {
+public class    CaryanamFinservApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(CaryanamFinservApplication.class, args);
