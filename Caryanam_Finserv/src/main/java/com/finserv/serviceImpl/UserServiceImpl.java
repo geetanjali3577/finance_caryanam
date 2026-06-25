@@ -96,11 +96,37 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponseDTO registerUser(UserRegisterDTO dto) {
 
-        if (!emailVerificationService
-                .isEmailVerified(dto.getEmail())) {
+        // Individual registration -> Email verification required
+        if (dto.getRegistrationType() == RegistrationType.INDIVIDUAL) {
 
-            throw new RuntimeException(
-                    "Please verify email first");
+            if (!emailVerificationService
+                    .isEmailVerified(dto.getEmail())) {
+
+                throw new RuntimeException(
+                        "Please verify email first");
+            }
+        }
+
+// Dealer registration -> Dealer code validation only
+        if (dto.getRegistrationType() == RegistrationType.DEALER) {
+
+            if (dto.getDealerCode() == null
+                    || dto.getDealerCode()
+                    .trim()
+                    .isEmpty()) {
+
+                throw new RuntimeException(
+                        "Dealer Code is Required"
+                );
+            }
+
+            if (!dealerRepository.existsByDealerCode(
+                    dto.getDealerCode())) {
+
+                throw new RuntimeException(
+                        "Invalid Dealer Code"
+                );
+            }
         }
 
         if (userRepository.existsByEmail(dto.getEmail())) {
