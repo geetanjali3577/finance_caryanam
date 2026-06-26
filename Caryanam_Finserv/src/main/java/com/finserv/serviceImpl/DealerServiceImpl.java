@@ -11,6 +11,7 @@ import com.finserv.enums.Role;
 import com.finserv.repository.DealerRepository;
 import com.finserv.repository.UserRepository;
 import com.finserv.service.DealerService;
+import com.finserv.dto.ChangePasswordDTO;
 
 import com.finserv.service.EmailVerificationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -427,6 +428,50 @@ public String verifyOtp(VerifyOtpDTO dto) {
                         new RuntimeException("Dealer not found"));
 
         dealerRepository.delete(dealer);
+    }
+
+    @Override
+    public String changePassword(ChangePasswordDTO dto) {
+
+        Optional<Dealer> optionalDealer =
+                dealerRepository.findByEmail(dto.getEmail());
+
+        if (optionalDealer.isEmpty()) {
+            return "Dealer not found";
+        }
+
+        Dealer dealer = optionalDealer.get();
+
+        // Old password check
+        if (!passwordEncoder.matches(
+                dto.getOldPassword(),
+                dealer.getPassword())) {
+
+            return "Old Password is Incorrect";
+        }
+
+        // Confirm password check
+        if (!dto.getNewPassword()
+                .equals(dto.getConfirmPassword())) {
+
+            return "New Password and Confirm Password do not match";
+        }
+
+        // Same password check
+        if (passwordEncoder.matches(
+                dto.getNewPassword(),
+                dealer.getPassword())) {
+
+            return "New Password cannot be same as Old Password";
+        }
+
+        // Update password
+        dealer.setPassword(
+                passwordEncoder.encode(dto.getNewPassword()));
+
+        dealerRepository.save(dealer);
+
+        return "Password Changed Successfully";
     }
 
 }

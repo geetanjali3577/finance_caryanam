@@ -56,8 +56,10 @@ public class SecurityConfig {
                                         "/api/dealer/register/send-otp",
                                         "/api/dealer/register/verify-otp",
                                         "/api/user/delete/{userId}",
-                                        "/api/dealer//{dealerCode}/user/{userId}",
+                                        "/api/dealer/{dealerCode}/user/{userId}",
                                         "/api/dealer/delete/{userId}",
+
+
                                                 "/api/user/reset-password",
                                                 "/api/dealer/register",
                                                 "/api/dealer/send-otp",
@@ -101,7 +103,8 @@ public class SecurityConfig {
 
                                                 "/api/user/**",
                                                 "/api/user/update/**",
-                                                "/api/user/search/email"
+                                                "/api/user/search/email",
+                                                "/api/user/change-password"
                                         ).hasAnyRole("USER", "ADMIN")
 
                                         // Personal Info
@@ -112,7 +115,9 @@ public class SecurityConfig {
                                         "/api/personal-info/update/**"
                                 ).hasAnyRole("USER","DEALER","ADMIN")
 
-                                .requestMatchers("/api/personal-info/all")
+                                .requestMatchers("/api/personal-info/all",
+                                        "/api/dealer/change-password"
+                                )
                                 .hasAnyRole("DEALER","ADMIN")
 
                                         // Documents

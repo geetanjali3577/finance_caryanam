@@ -525,4 +525,12 @@ public class UserController {
                         .verifyRegisterOtp(dto)
         );
     }
+
+    @PutMapping("/change-password")
+    public ResponseEntity<String> changePassword(
+            @RequestBody ChangePasswordDTO dto) {
+
+        return ResponseEntity.ok(
+                userService.changePassword(dto));
+    }
 }

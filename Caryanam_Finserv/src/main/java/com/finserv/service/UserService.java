@@ -49,4 +49,6 @@ public interface UserService {
     DealerUsersResponseDTO getUsersByDealerCode(String dealerCode);
 
     void deleteDealerUser(String dealerCode, Long userId);
+
+    String changePassword(ChangePasswordDTO dto);
 }

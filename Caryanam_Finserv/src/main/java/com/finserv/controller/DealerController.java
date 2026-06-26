@@ -234,4 +234,12 @@ public class DealerController {
 
         return ResponseEntity.ok("Dealer account deleted successfully");
     }
+
+    @PutMapping("/change-password")
+    public ResponseEntity<String> changePassword(
+            @RequestBody ChangePasswordDTO dto) {
+
+        return ResponseEntity.ok(
+                dealerService.changePassword(dto));
+    }
 }

@@ -866,4 +866,49 @@ public class UserServiceImpl implements UserService {
 
         userRepository.delete(user);
     }
+
+
+    @Override
+    public String changePassword(ChangePasswordDTO dto) {
+
+        Optional<User> optionalUser =
+                userRepository.findByEmail(dto.getEmail());
+
+        if (optionalUser.isEmpty()) {
+            return "User not found";
+        }
+
+        User user = optionalUser.get();
+
+        // Old password check
+        if (!passwordEncoder.matches(
+                dto.getOldPassword(),
+                user.getPassword())) {
+
+            return "Old Password is Incorrect";
+        }
+
+        // Confirm password check
+        if (!dto.getNewPassword()
+                .equals(dto.getConfirmPassword())) {
+
+            return "New Password and Confirm Password do not match";
+        }
+
+        // Same password check
+        if (passwordEncoder.matches(
+                dto.getNewPassword(),
+                user.getPassword())) {
+
+            return "New Password cannot be same as Old Password";
+        }
+
+        // Update password
+        user.setPassword(
+                passwordEncoder.encode(dto.getNewPassword()));
+
+        userRepository.save(user);
+
+        return "Password Changed Successfully";
+    }
 }

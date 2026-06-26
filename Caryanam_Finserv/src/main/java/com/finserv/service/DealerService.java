@@ -21,4 +21,6 @@ public interface DealerService {
     DealerResponseDTO searchByDealerCode(String dealerCode);
 
     void deleteDealer(Long dealerId);
+
+    String changePassword(ChangePasswordDTO dto);
 }
