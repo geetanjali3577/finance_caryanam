@@ -3,11 +3,9 @@ package com.finserv.enums;
 public enum DocumentType {
 
     // ID PROOFS
-    AADHAAR,
+    AADHAAR_1,
+    AADHAAR_2,
     PAN,
-    PASSPORT,
-    VOTER_ID,
-    DRIVING_LICENSE,
 
     // ADDRESS PROOFS
     LIGHT_BILL,
@@ -15,17 +13,20 @@ public enum DocumentType {
 
 
     // INCOME DOCUMENTS
-    SALARY_SLIP,
+    SALARY_SLIP_1,
+    SALARY_SLIP_2,
+    SALARY_SLIP_3,
     BANK_STATEMENT,
     ITR_RETURN,
     APPOINTMENT_LETTER,
 
 
     // VEHICLE DOCUMENTS
-    RC,
+    RC_1,
+    RC_2,
     INSURANCE,
-    VEHICLE_INVOICE,
-    VEHICLE_PHOTO,
+
+
     ODOMETER_READING,
     CHASSIS_NUMBER,
     CAR_FRONT_SIDE_PHOTO,
@@ -33,8 +34,6 @@ public enum DocumentType {
 
 
 
-    // OTHER DOCUMENTS
 
-    PASSPORT_SIZE_PHOTO,
 
 }

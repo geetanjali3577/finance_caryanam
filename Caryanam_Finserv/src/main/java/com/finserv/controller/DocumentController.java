@@ -107,10 +107,10 @@ public class DocumentController {
 
             // FILE SIZE VALIDATION
             if (file.getSize()
-                    > 5 * 1024 * 1024) {
+                    >  25 * 1024 * 1024) {
 
                 throw new BadRequestException(
-                        "File Size Must Be Less Than 5MB"
+                        "File Size Must Be Less Than  25MB"
                 );
             }
 
