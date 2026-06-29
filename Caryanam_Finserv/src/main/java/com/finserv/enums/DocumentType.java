@@ -1,5 +1,8 @@
 package com.finserv.enums;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+@JsonDeserialize(using = DocumentTypeDeserializer.class)
 public enum DocumentType {
 
     // ID PROOFS
