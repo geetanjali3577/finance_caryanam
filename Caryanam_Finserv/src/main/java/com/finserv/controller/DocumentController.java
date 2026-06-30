@@ -120,12 +120,13 @@ public class DocumentController {
 
             if (contentType == null
                     || (!contentType.equals("application/pdf")
-                    || contentType.equals("image/jpeg")
-                    || contentType.equals("image/jpg")
-                    && !contentType.equals("image/png"))) {
+                    && !contentType.equals("image/jpeg")
+                    && !contentType.equals("image/jpg")     // <-- Add this
+                    && !contentType.equals("image/png")
+                    && !contentType.equals("image/webp"))) { // <-- Add this
 
                 throw new BadRequestException(
-                        "Only PDF, JPG and PNG Files Allowed"
+                        "Only PDF, JPG, PNG and WEBP Files Allowed"
                 );
             }
         }
