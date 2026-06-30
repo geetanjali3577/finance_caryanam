@@ -119,12 +119,10 @@ public class DocumentController {
                     file.getContentType();
 
             if (contentType == null
-                    || (!contentType.equals(
-                    "application/pdf")
-                    && !contentType.equals(
-                    "image/jpeg")
-                    && !contentType.equals(
-                    "image/png"))) {
+                    || (!contentType.equals("application/pdf")
+                    || contentType.equals("image/jpeg")
+                    || contentType.equals("image/jpg")
+                    && !contentType.equals("image/png"))) {
 
                 throw new BadRequestException(
                         "Only PDF, JPG and PNG Files Allowed"
