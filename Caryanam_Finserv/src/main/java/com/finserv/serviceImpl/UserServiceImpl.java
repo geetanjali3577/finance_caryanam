@@ -684,6 +684,7 @@ public class UserServiceImpl implements UserService {
         options.put("currency", "INR");
         options.put("receipt", "user_" + userId);
 
+
         Order order = razorpay.orders.create(options);
 
         user.setRazorpayOrderId(order.get("id"));

@@ -60,7 +60,7 @@ public class AuthController {
 
         // EMAIL FORMAT VALIDATION
         if (!request.getEmail()
-                .matches("^[A-Za-z0-9._%+-]+@gmail\\.com$")) {
+                .matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
 
             return ResponseEntity.badRequest()
                     .body(new ResponseDto<>(
