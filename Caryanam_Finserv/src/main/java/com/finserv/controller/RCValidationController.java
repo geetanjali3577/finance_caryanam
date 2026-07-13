@@ -20,6 +20,7 @@ public class RCValidationController {
     @PostMapping("/rc")
     public ResponseEntity<String> validateRC(@RequestBody Map<String, Object> requestBody) {
         // IDSPay Production Base URL + Endpoint
+        System.out.println("validateRC requestBody: " + requestBody);
         String idspayUrl = "https://javabackend.idspay.in/api/v1/prod/srv2/validation/rc";
         // Set up headers for the JSON request
         HttpHeaders headers = new HttpHeaders();
