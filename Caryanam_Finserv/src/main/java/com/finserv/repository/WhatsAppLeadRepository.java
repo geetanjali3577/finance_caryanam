@@ -8,4 +8,5 @@ import java.util.List;
 @Repository
 public interface WhatsAppLeadRepository extends JpaRepository<WhatsAppLead, Long> {
     List<WhatsAppLead> findAllByOrderByCreatedAtDesc();
+    boolean existsByMobileNumber(String mobileNumber);
 }

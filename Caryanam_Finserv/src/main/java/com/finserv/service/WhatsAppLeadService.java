@@ -8,4 +8,5 @@ import java.util.List;
 public interface WhatsAppLeadService {
     WhatsAppLeadResponse saveLead(WhatsAppLeadRequest request);
     List<WhatsAppLeadDTO> getAllLeads();
+    boolean existsByMobileNumber(String mobileNumber);
 }

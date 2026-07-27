@@ -47,4 +47,10 @@ public class WhatsAppLeadServiceImpl implements WhatsAppLeadService {
                         .build())
                 .collect(Collectors.toList());
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public boolean existsByMobileNumber(String mobileNumber) {
+        return leadRepository.existsByMobileNumber(mobileNumber);
+    }
 }

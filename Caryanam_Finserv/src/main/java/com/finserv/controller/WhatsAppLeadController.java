@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 @RestController
 @RequestMapping("/api/v1/whatsapp-leads")
@@ -30,5 +32,13 @@ public class WhatsAppLeadController {
     public ResponseEntity<List<WhatsAppLeadDTO>> getAllLeads() {
         List<WhatsAppLeadDTO> leads = leadService.getAllLeads();
         return ResponseEntity.ok(leads);
+    }
+
+    @GetMapping("/check")
+    public ResponseEntity<Map<String, Boolean>> checkLeadExists(@RequestParam String mobileNumber) {
+        boolean exists = leadService.existsByMobileNumber(mobileNumber);
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("exists", exists);
+        return ResponseEntity.ok(response);
     }
 }
