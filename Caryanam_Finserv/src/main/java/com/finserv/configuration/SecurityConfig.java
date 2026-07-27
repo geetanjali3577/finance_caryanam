@@ -74,6 +74,7 @@ public class SecurityConfig {
                                           ).permitAll()
 
                                 .requestMatchers(HttpMethod.PUT, "/api/user/payment-success/**").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/api/v1/whatsapp-leads").permitAll()
                                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
                                         // Admin APIs
@@ -93,7 +94,8 @@ public class SecurityConfig {
                                                 "/api/documents/status/**",
                                                 "/api/documents/pending",
                                                 "/api/documents/verified",
-                                                "/api/documents/*/remarks"
+                                                "/api/documents/*/remarks",
+                                                "/api/v1/whatsapp-leads"
                                         ).hasRole("ADMIN")
                                        .requestMatchers("/api/user/dealer/**")
                                         .permitAll()
@@ -200,6 +202,8 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(List.of(
                 "http://localhost:5173",
+                "http://localhost:5174",
+                "http://localhost:5175",
                 "http://localhost:3000",
                 "http://localhost:63342",
                 "https://v1.vahanfinserv.com, " ,
