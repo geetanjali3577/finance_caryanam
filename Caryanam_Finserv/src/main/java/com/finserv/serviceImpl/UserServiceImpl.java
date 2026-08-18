@@ -11,6 +11,7 @@ import com.finserv.enums.Role;
 import com.finserv.enums.UserStatus;
 import com.finserv.repository.*;
 import com.finserv.service.EmailVerificationService;
+import com.finserv.service.MobileVerificationService;
 import com.finserv.service.UserService;
 
 import com.finserv.whatapp.WhatsAppService;
@@ -47,6 +48,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private EmailVerificationService emailVerificationService;
+
+    @Autowired
+    private MobileVerificationService mobileVerificationService;
 
     @Value("${razorpay.key.id}")
     private String keyId;
@@ -96,18 +100,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponseDTO registerUser(UserRegisterDTO dto) {
 
-        // Individual registration -> Email verification required
-        if (dto.getRegistrationType() == RegistrationType.INDIVIDUAL) {
-
-            if (!emailVerificationService
-                    .isEmailVerified(dto.getEmail())) {
-
-                throw new RuntimeException(
-                        "Please verify email first");
-            }
+        if (!emailVerificationService.isEmailVerified(dto.getEmail())) {
+            throw new RuntimeException("Please verify email first");
         }
 
-// Dealer registration -> Dealer code validation only
+        if (!mobileVerificationService.isMobileVerified(dto.getMobileNumber())) {
+            throw new RuntimeException("Please verify mobile number first");
+        }
+
+        // Dealer registration -> Dealer code validation only
         if (dto.getRegistrationType() == RegistrationType.DEALER) {
 
             if (dto.getDealerCode() == null

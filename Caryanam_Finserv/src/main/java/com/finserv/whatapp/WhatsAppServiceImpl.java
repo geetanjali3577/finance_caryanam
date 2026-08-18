@@ -26,7 +26,89 @@ public class WhatsAppServiceImpl implements WhatsAppService {
     @Value("${whatsapp.phone.number.id}")
     private String phoneNumberId;
 
+    @Value("${whatsapp.template.otp:otp_varification}")
+    private String otpTemplateName;
+
     private final RestTemplate restTemplate;
+
+    @Override
+    public void sendMobileVerificationOtp(String mobileNumber, String otp) {
+        try {
+            String maskedNumber = (mobileNumber != null && mobileNumber.length() >= 4)
+                    ? "****" + mobileNumber.substring(mobileNumber.length() - 4)
+                    : mobileNumber;
+            System.out.println("WhatsApp OTP request initiated for mobile ending " + maskedNumber);
+
+            String url = "https://graph.facebook.com/v25.0/"
+                    + phoneNumberId
+                    + "/messages";
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setBearerAuth(accessToken);
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            String formattedNumber = mobileNumber
+                    .replace("+", "")
+                    .replace(" ", "")
+                    .trim();
+
+            if (!formattedNumber.startsWith("91")) {
+                formattedNumber = "91" + formattedNumber;
+            }
+
+            Map<String, Object> payload = new HashMap<>();
+            payload.put("messaging_product", "whatsapp");
+            payload.put("to", formattedNumber);
+            payload.put("type", "template");
+
+            Map<String, Object> template = new HashMap<>();
+            template.put("name", otpTemplateName);
+
+            Map<String, Object> language = new HashMap<>();
+            language.put("code", "en_US");
+            template.put("language", language);
+
+            // Body component with OTP parameter
+            Map<String, Object> bodyComponent = new HashMap<>();
+            bodyComponent.put("type", "body");
+            bodyComponent.put("parameters", List.of(
+                    Map.of("type", "text", "text", otp),
+                    Map.of("type", "text", "text", "Login")
+            ));
+
+            // Button component for Copy Code button (sub_type: url, index: 0)
+            Map<String, Object> buttonComponent = new HashMap<>();
+            buttonComponent.put("type", "button");
+            buttonComponent.put("sub_type", "url");
+            buttonComponent.put("index", "0");
+            buttonComponent.put("parameters", List.of(
+                    Map.of("type", "text", "text", otp)
+            ));
+
+            template.put("components", List.of(bodyComponent, buttonComponent));
+            payload.put("template", template);
+
+            HttpEntity<Map<String, Object>> request = new HttpEntity<>(payload, headers);
+
+            ResponseEntity<String> response = restTemplate.postForEntity(
+                    url,
+                    request,
+                    String.class
+            );
+
+            System.out.println("WhatsApp OTP Status : " + response.getStatusCode());
+
+        } catch (HttpClientErrorException e) {
+            System.out.println("===== WHATSAPP OTP ERROR =====");
+            System.out.println("Status Code : " + e.getStatusCode());
+            System.out.println("Response : " + e.getResponseBodyAsString());
+            throw new RuntimeException("WhatsApp API failure: " + e.getResponseBodyAsString(), e);
+        } catch (Exception e) {
+            System.out.println("===== WHATSAPP OTP ERROR =====");
+            e.printStackTrace();
+            throw new RuntimeException("Failed to send WhatsApp OTP", e);
+        }
+    }
 
     @Override
     public void sendCustomerDetailsToBank(

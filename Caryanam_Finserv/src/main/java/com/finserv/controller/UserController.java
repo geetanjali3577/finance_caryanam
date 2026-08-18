@@ -9,6 +9,7 @@ import com.finserv.repository.DealerRepository;
 import com.finserv.repository.UserRepository;
 import com.finserv.service.UserService;
 import com.finserv.service.EmailVerificationService;
+import com.finserv.service.MobileVerificationService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -26,6 +27,7 @@ public class UserController {
     private final UserRepository userRepository;
     private final DealerRepository dealerRepository;
     private final EmailVerificationService emailVerificationService;
+    private final MobileVerificationService mobileVerificationService;
 
     @PostMapping("/register")
     public ResponseEntity<ResponseDto<UserResponseDTO>> registerUser(@RequestBody UserRegisterDTO dto) {
@@ -523,6 +525,24 @@ public class UserController {
 
                 emailVerificationService
                         .verifyRegisterOtp(dto)
+        );
+    }
+
+    @PostMapping("/register/send-mobile-otp")
+    public ResponseEntity<String> sendRegisterMobileOtp(
+            @RequestParam String mobileNumber) {
+
+        return ResponseEntity.ok(
+                mobileVerificationService.sendUserRegisterMobileOtp(mobileNumber)
+        );
+    }
+
+    @PostMapping("/register/verify-mobile-otp")
+    public ResponseEntity<String> verifyRegisterMobileOtp(
+            @RequestBody VerifyMobileOtpDTO dto) {
+
+        return ResponseEntity.ok(
+                mobileVerificationService.verifyRegisterMobileOtp(dto)
         );
     }
 

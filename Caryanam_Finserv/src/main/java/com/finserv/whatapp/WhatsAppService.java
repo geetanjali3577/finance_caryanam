@@ -15,4 +15,9 @@ public interface WhatsAppService {
             PersonalInfo personalInfo,
             List<Document> documents
     );
+
+    void sendMobileVerificationOtp(
+            String mobileNumber,
+            String otp
+    );
 }

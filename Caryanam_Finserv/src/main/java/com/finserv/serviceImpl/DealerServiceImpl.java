@@ -14,6 +14,7 @@ import com.finserv.service.DealerService;
 import com.finserv.dto.ChangePasswordDTO;
 
 import com.finserv.service.EmailVerificationService;
+import com.finserv.service.MobileVerificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -41,15 +42,18 @@ public class DealerServiceImpl implements DealerService {
     @Autowired
     private EmailVerificationService emailVerificationService;
 
+    @Autowired
+    private MobileVerificationService mobileVerificationService;
 
     @Override
     public DealerResponseDTO registerDealer(DealerRegisterDTO dto) {
 
-        if(!emailVerificationService
-                .isEmailVerified(dto.getEmail())){
+        if (!emailVerificationService.isEmailVerified(dto.getEmail())) {
+            throw new RuntimeException("Please verify email first");
+        }
 
-            throw new RuntimeException(
-                    "Please verify email first");
+        if (!mobileVerificationService.isMobileVerified(dto.getMobileNumber())) {
+            throw new RuntimeException("Please verify mobile number first");
         }
 
         if (dealerRepository.existsByEmail(dto.getEmail())) {

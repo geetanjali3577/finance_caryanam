@@ -53,11 +53,12 @@ public class SecurityConfig {
                                                 "/api/user/verify-otp",
                                         "/api/user/register/send-otp",
                                         "/api/user/register/verify-otp",
+                                        "/api/user/register/send-mobile-otp",
+                                        "/api/user/register/verify-mobile-otp",
                                         "/api/dealer/register/send-otp",
                                         "/api/dealer/register/verify-otp",
-
-
-
+                                        "/api/dealer/register/send-mobile-otp",
+                                        "/api/dealer/register/verify-mobile-otp",
 
                                                 "/api/user/reset-password",
                                                 "/api/dealer/register",
