@@ -175,39 +175,7 @@ public class DealerServiceImpl implements DealerService {
         return "OTP sent successfully";
     }
 
-//    @Override
-//    public String verifyOtp(VerifyOtpDTO dto) {
-//
-//        Optional<Dealer> optionalDealer =
-//                dealerRepository.findByEmail(dto.getEmail());
-//
-//        if (optionalDealer.isEmpty()) {
-//            return "Dealer not found";
-//        }
-//
-//        Dealer dealer = optionalDealer.get();
-//
-//        if (dealer.getOtp() == null) {
-//            return "OTP not found";
-//        }
-//
-//        if (!dealer.getOtp().equals(dto.getOtp())) {
-//            return "Invalid OTP";
-//        }
-//
-//        if (dealer.getOtpGeneratedTime()
-//                .plusMinutes(5)
-//                .isBefore(LocalDateTime.now())) {
-//
-//            return "OTP expired";
-//        }
-//
-//        dealer.setIsOtpVerified(true);
-//
-//        dealerRepository.save(dealer);
-//
-//        return "OTP verified successfully";
-//    }
+
 @Override
 public String verifyOtp(VerifyOtpDTO dto) {
 
