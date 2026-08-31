@@ -208,7 +208,8 @@ public class SecurityConfig {
                 "http://localhost:3000",
                 "http://localhost:63342",
                 "https://v1.vahanfinserv.com, " ,
-                "https://vahanfinserv.com"
+                "https://vahanfinserv.com",
+                "https://www.vahanfinserv.com/"
         ));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(Arrays.asList("*"));

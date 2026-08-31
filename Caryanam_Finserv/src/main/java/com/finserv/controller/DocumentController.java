@@ -46,7 +46,7 @@ public class DocumentController {
         }
 
         // USER ID LIMIT
-        if (userId > 999999999L) {
+        if (userId > 9999999999L) {
 
             throw new BadRequestException(
                     "User ID is too large"

@@ -23,4 +23,7 @@ public class UserRegisterDTO {
     private String dealerCode;
     private String role;
 
+    // When true, skip email/mobile verification (dealer adding customer)
+    private Boolean isDealerAdded = false;
+
 }

@@ -100,12 +100,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponseDTO registerUser(UserRegisterDTO dto) {
 
-        if (!emailVerificationService.isEmailVerified(dto.getEmail())) {
-            throw new RuntimeException("Please verify email first");
-        }
+        // Skip email/mobile verification when dealer is adding a customer
+        if (!Boolean.TRUE.equals(dto.getIsDealerAdded())) {
+            if (!emailVerificationService.isEmailVerified(dto.getEmail())) {
+                throw new RuntimeException("Please verify email first");
+            }
 
-        if (!mobileVerificationService.isMobileVerified(dto.getMobileNumber())) {
-            throw new RuntimeException("Please verify mobile number first");
+            if (!mobileVerificationService.isMobileVerified(dto.getMobileNumber())) {
+                throw new RuntimeException("Please verify mobile number first");
+            }
         }
 
         // Dealer registration -> Dealer code validation only
