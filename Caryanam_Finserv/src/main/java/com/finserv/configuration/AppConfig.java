@@ -1,4 +1,4 @@
-package com.finserv.config;
+package com.finserv.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
