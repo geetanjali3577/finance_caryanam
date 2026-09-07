@@ -102,15 +102,15 @@ public class EmailServiceImpl implements EmailService {
             helper.setText(body);
 
             for (Document doc : documents) {
-
-                if (doc.getFileData() != null) {
-
-                    helper.addAttachment(
-                            doc.getFileName(),
-                            new ByteArrayResource(
-                                    doc.getFileData()
-                            )
-                    );
+                if (doc.getFilePath() != null) {
+                    java.nio.file.Path filePath = java.nio.file.Paths.get(doc.getFilePath());
+                    if (java.nio.file.Files.exists(filePath)) {
+                        byte[] fileBytes = java.nio.file.Files.readAllBytes(filePath);
+                        helper.addAttachment(
+                                doc.getFileName() != null ? doc.getFileName() : filePath.getFileName().toString(),
+                                new ByteArrayResource(fileBytes)
+                        );
+                    }
                 }
             }
 

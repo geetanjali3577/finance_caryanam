@@ -18,6 +18,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 @RestController
@@ -224,19 +228,31 @@ public class DocumentController {
             @PathVariable Long documentId) {
 
         Document document = documentService.getEntityById(documentId);
+        if (document.getFilePath() == null) {
+            throw new BadRequestException("File path not found for document");
+        }
+        Path path = Paths.get(document.getFilePath());
+        if (!Files.exists(path)) {
+            throw new BadRequestException("File not found on disk");
+        }
 
-        return ResponseEntity.ok()
-                .contentType(
-                        MediaType.parseMediaType(
-                                document.getContentType()
-                        )
-                )
-                .header(
-                        HttpHeaders.CONTENT_DISPOSITION,
-                        "inline; filename=\"" +
-                                document.getFileName() + "\""
-                )
-                .body(document.getFileData());
+        try {
+            byte[] data = Files.readAllBytes(path);
+            return ResponseEntity.ok()
+                    .contentType(
+                            MediaType.parseMediaType(
+                                    document.getContentType() != null ? document.getContentType() : "application/octet-stream"
+                            )
+                    )
+                    .header(
+                            HttpHeaders.CONTENT_DISPOSITION,
+                            "inline; filename=\"" +
+                                    document.getFileName() + "\""
+                    )
+                    .body(data);
+        } catch (IOException e) {
+            throw new BadRequestException("Failed to read document file: " + e.getMessage());
+        }
     }
 
     //ADMIN
@@ -263,11 +279,23 @@ public class DocumentController {
     public ResponseEntity<byte[]> previewDocument(@PathVariable Long documentId) {
 
         Document doc = documentService.getEntityById(documentId);
+        if (doc.getFilePath() == null) {
+            throw new BadRequestException("File path not found for document");
+        }
+        Path path = Paths.get(doc.getFilePath());
+        if (!Files.exists(path)) {
+            throw new BadRequestException("File not found on disk");
+        }
 
-        return ResponseEntity.ok()
-                .header("Content-Type", doc.getContentType())
-                .header("Content-Disposition", "inline; filename=" + doc.getFileName())
-                .body(doc.getFileData());
+        try {
+            byte[] data = Files.readAllBytes(path);
+            return ResponseEntity.ok()
+                    .header("Content-Type", doc.getContentType() != null ? doc.getContentType() : "application/octet-stream")
+                    .header("Content-Disposition", "inline; filename=" + doc.getFileName())
+                    .body(data);
+        } catch (IOException e) {
+            throw new BadRequestException("Failed to read document file: " + e.getMessage());
+        }
     }
 
     //ADMIN USER

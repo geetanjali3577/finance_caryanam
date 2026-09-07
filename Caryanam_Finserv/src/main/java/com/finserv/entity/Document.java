@@ -16,6 +16,7 @@ public class Document {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long documentId;
+
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -27,6 +28,8 @@ public class Document {
 
     private String fileName;
 
+    private String filePath;
+
     private String contentType;
 
     private Long fileSize;
@@ -35,10 +38,6 @@ public class Document {
 
     @Enumerated(EnumType.STRING)
     private DocumentStatus status;
-    @JsonIgnore
-    @Lob
-    @Column(columnDefinition = "LONGBLOB")
-    private byte[] fileData;
 
     private LocalDateTime uploadedAt;
 }
