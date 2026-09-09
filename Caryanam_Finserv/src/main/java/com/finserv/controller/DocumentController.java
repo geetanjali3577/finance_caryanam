@@ -353,8 +353,8 @@ public class DocumentController {
     //ADMIN
     // GET PENDING DOCUMENTS TO ADMIN
     @GetMapping("/pending")
-    public ResponseEntity<ResponseDto> getPendingDocuments() {
-        List<Document> pendingDocs =
+    public ResponseEntity<ResponseDto<List<DocumentResponseDTO>>> getPendingDocuments() {
+        List<DocumentResponseDTO> pendingDocs =
                 documentService.getPendingDocuments();
 
         return ResponseEntity.ok(
@@ -370,9 +370,9 @@ public class DocumentController {
     //ADMIN
     //  GET VERIFIED DOCUMENTS TO ADMIN
     @GetMapping("/verified")
-    public ResponseEntity<ResponseDto> getVerifiedDocuments() {
+    public ResponseEntity<ResponseDto<List<DocumentResponseDTO>>> getVerifiedDocuments() {
 
-        List<Document> verifiedDocs =
+        List<DocumentResponseDTO> verifiedDocs =
                 documentService.getVerifiedDocuments();
 
         return ResponseEntity.ok(

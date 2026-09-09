@@ -27,9 +27,9 @@ public interface DocumentService {
 
     Document addRemarks(Long documentId, RemarkRequestDTO dto);
 
-    List<Document> getPendingDocuments();
+    List<DocumentResponseDTO> getPendingDocuments();
 
-    List<Document> getVerifiedDocuments();
+    List<DocumentResponseDTO> getVerifiedDocuments();
 
     DocumentCountDTO getDocumentCounts(Long userId);
 

@@ -16,12 +16,12 @@ import com.finserv.repository.NotificationRepository;
 import com.finserv.repository.UserRepository;
 import com.finserv.service.DocumentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.ByteArrayOutputStream;
 import java.nio.file.Files;
@@ -39,6 +39,9 @@ import java.util.zip.ZipOutputStream;
 public class DocumentServiceImpl implements DocumentService {
 
     private static final String UPLOAD_DIR = "media/documents";
+
+    @Value("${app.base-url}")
+    private String baseUrl;
 
     private final DocumentRepository documentRepository;
     private final UserRepository userRepository;
@@ -162,19 +165,15 @@ public class DocumentServiceImpl implements DocumentService {
         );
         dto.setFileName(doc.getFileName());
 
-        String savedFileName = "";
+        // Build fileUrl from the stored file path
+        String fileUrl = null;
         if (doc.getFilePath() != null && !doc.getFilePath().isBlank()) {
-            savedFileName = Paths.get(doc.getFilePath()).getFileName().toString();
+            String savedFileName = Paths.get(doc.getFilePath()).getFileName().toString();
+            fileUrl = baseUrl + "/media/documents/" + savedFileName;
         } else if (doc.getFileName() != null) {
-            savedFileName = doc.getFileName().replaceAll("\\s+", "_");
+            String savedFileName = doc.getFileName().replaceAll("\\s+", "_");
+            fileUrl = baseUrl + "/media/documents/" + savedFileName;
         }
-
-        // Absolute URL
-        String fileUrl = ServletUriComponentsBuilder
-                .fromCurrentContextPath()
-                .path("/media/documents/")
-                .path(savedFileName)
-                .toUriString();
 
         dto.setFileUrl(fileUrl);
         dto.setStatus(
@@ -317,14 +316,16 @@ public class DocumentServiceImpl implements DocumentService {
 
     // GET PENDING DOCUMENTS
     @Override
-    public List<Document> getPendingDocuments() {
-        return documentRepository.findByStatusAndUser_PaymentDoneTrue(DocumentStatus.PENDING);
+    public List<DocumentResponseDTO> getPendingDocuments() {
+        return documentRepository.findByStatusAndUser_PaymentDoneTrue(DocumentStatus.PENDING)
+                .stream().map(this::mapToDTO).toList();
     }
 
     // GET VERIFIED DOCUMENTS
     @Override
-    public List<Document> getVerifiedDocuments() {
-        return documentRepository.findByStatusAndUser_PaymentDoneTrue(DocumentStatus.VERIFIED);
+    public List<DocumentResponseDTO> getVerifiedDocuments() {
+        return documentRepository.findByStatusAndUser_PaymentDoneTrue(DocumentStatus.VERIFIED)
+                .stream().map(this::mapToDTO).toList();
     }
 
     // Upload Document count
